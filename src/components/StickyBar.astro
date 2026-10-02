@@ -5,9 +5,9 @@ import type { Dict } from '../i18n/en';
 interface Props { t: Dict }
 const { t } = Astro.props;
 ---
-<div class="sticky" data-sticky>
+<aside class="sticky" data-sticky aria-label={t.cta}>
   <a href="#request" class="btn btn--coral">{t.cta}</a>
-</div>
+</aside>
 
 <script>
   const bar = document.querySelector<HTMLElement>('[data-sticky]');

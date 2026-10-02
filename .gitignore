@@ -15,3 +15,4 @@ docs/project-context.md
 .github/prompts/
 test-results/
 playwright-report/
+.lighthouseci/

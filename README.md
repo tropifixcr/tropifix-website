@@ -13,7 +13,9 @@ npm run dev
 
 `npm run build` builds the site into `dist/` and then runs `scripts/check-dist.mjs`, which fails the build on any broken internal link, missing image or missing SEO tag.
 
-`npm test` runs the request form end to end in a browser at phone and desktop size (build first). The tests intercept the submission, so no test lead is ever sent. To try the form by hand without it counting as a real lead, open the page with `?test` at the end of the address: the email subject then starts with `[TEST]` and analytics are skipped.
+`npm test` runs the request form end to end in a browser at phone and desktop size (build first). The tests intercept the submission, so no test lead is ever sent. `npm test` also runs an accessibility check (axe) on every page type and form step. `npm run lighthouse` runs Lighthouse on mobile three times per page type and fails below 90 (median for performance, worst run for accessibility, best practices and SEO).
+
+To try the form by hand without it counting as a real lead, open the page with `?test` at the end of the address: the email subject then starts with `[TEST]` and analytics are skipped.
 
 ## How deploys work
 

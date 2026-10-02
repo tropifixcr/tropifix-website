@@ -14,6 +14,13 @@ jobs:
       - run: npm ci
       # Build, then check every page for broken links, missing files and SEO tags.
       - run: npm run build
-      # Run the request form end to end at phone and desktop size.
+      # Run the request form end to end, plus an accessibility check on every page type and form step.
       - run: npx playwright install --with-deps chromium
       - run: npm test
+      # Lighthouse on mobile for each page type in both languages. Built as it will be on the
+      # real domain, because the noindex tag used on netlify.app would fail the SEO score.
+      - run: npm run build
+        env:
+          CONTEXT: production
+          SITE_URL: https://tropifixcr.com
+      - run: npm run lighthouse
