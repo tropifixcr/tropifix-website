@@ -6,9 +6,10 @@ Ten minutes, on your own phone, before each launch and after any big change. Use
 2. **Hero.** The video plays silently and smoothly, or the still image shows. No play button, no sound. (Until the hero image is generated, the hero is a plain teal field.)
 3. **Sticky button.** Scroll past the form: the "Request a fix" bar slides in at the bottom. Scroll back to the form: it slides away. It never covers a form field.
 4. **Form, step by step.** Add `?test=1` to the address first.
-   - Step 1: pick a service, type a description, tap "Add photos" and **take a photo with the camera**. A thumbnail appears.
-   - Step 2: pick Tamarindo – Las Catalinas and check the list of beaches appears. Pick another zone and check a text field replaces it.
-   - Steps 3 and 4: tap Next with nothing filled once, to see the error messages.
+   - Step 1: pick a service.
+   - Step 2: pick the type of job, type a description, tap "Add photos" and **take a photo with the camera**. A thumbnail appears.
+   - Step 3: pick Tamarindo – Las Catalinas and check the list of beaches appears. Pick another zone and check a text field replaces it.
+   - Steps 4 and 5: tap Next with nothing filled once, to see the error messages.
    - Go Back two steps and forward again: your answers are still there.
 5. **Submit.** Use the name "TEST". You should see "Thanks, TEST. We've got your request."
 6. **Email.** The lead arrives in the leads inbox with a subject starting `[TEST]` and the photo.

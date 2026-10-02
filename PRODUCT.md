@@ -35,7 +35,7 @@ One pro per trade per zone, with TropiFix following up with both sides to confir
 
 ## Capabilities and Constraints
 
-- 21 services with official names (see `brand/BRAND.md`), plus "Other / not sure".
+- 16 services on the site (see `src/data/services.ts`). Tree trimming sits under landscaping, mold and humidity under painting, generators under solar, and security cameras under Wi-Fi and smart home. Security and property checks, cleaning and turnovers, and "Other / not sure" are off for now.
 - Response time: the pro contacts the customer within 4 hours (set in the pro's contract); TropiFix follows up with both.
 - No pros signed yet. Do not describe the roster, vetting process, prices or guarantees until Loic confirms them.
 - The site stays on `netlify.app`, blocked from search engines, until the real domain goes live.

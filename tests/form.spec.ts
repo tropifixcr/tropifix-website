@@ -39,10 +39,12 @@ const sentEvents = (page: Page) =>
 
 const choose = (page: Page, name: string, value: string) =>
   page.locator(`label:has(input[name=${name}][value="${value}"])`).click();
-const next = (page: Page) => page.getByRole('button', { name: 'Next' }).click();
+const next = (page: Page) => page.locator('.rf__next').click();
 
+/** Steps 1 and 2: pick the service, then describe the job. Leaves the form on step 2. */
 async function fillStep1(page: Page, descriptionLabel = 'Describe the problem') {
   await choose(page, 'service', 'plumbing');
+  await next(page);
   await choose(page, 'job_type', 'repair');
   await page.getByLabel(descriptionLabel).fill('Kitchen tap leaks under the sink.');
 }
@@ -50,21 +52,26 @@ async function fillStep1(page: Page, descriptionLabel = 'Describe the problem') 
 test('full run-through: validation, back and forward, photo, thank-you, WhatsApp', async ({ page }) => {
   const posts = await interceptSubmit(page);
   await page.goto('/?test');
-  await expect(page.getByText('Step 1 of 4')).toBeVisible();
+  await expect(page.getByText('Step 1 of 5')).toBeVisible();
 
-  // Step 1: errors show, then clear.
+  // Step 1 is the service only; step 2 is the job. Errors show, then clear.
   await next(page);
   await expect(page.getByText('Pick a service')).toBeVisible();
+  await choose(page, 'service', 'plumbing');
+  await next(page);
+  await expect(page.getByText('Step 2 of 5')).toBeVisible();
+  await next(page);
   await expect(page.getByText('Pick the type of job.')).toBeVisible();
   await expect(page.getByText('Tell us a little about the problem.')).toBeVisible();
-  await fillStep1(page);
+  await choose(page, 'job_type', 'repair');
+  await page.getByLabel('Describe the problem').fill('Kitchen tap leaks under the sink.');
   const photo = await bigPhoto(page);
   await page.locator('#rf-photo-picker').setInputFiles(photo);
   await expect(page.locator('.rf__thumbs img')).toHaveCount(1);
   await next(page);
 
-  // Step 2: Zone 1 shows the town list.
-  await expect(page.getByText('Step 2 of 4')).toBeVisible();
+  // Step 3: Zone 1 shows the town list.
+  await expect(page.getByText('Step 3 of 5')).toBeVisible();
   await next(page);
   await expect(page.getByText('Pick a zone.')).toBeVisible();
   await page.getByLabel('Zone').selectOption('zone1');
@@ -77,19 +84,21 @@ test('full run-through: validation, back and forward, photo, thank-you, WhatsApp
   // Back and forward keeps answers.
   await page.getByRole('button', { name: 'Back' }).click();
   await expect(page.getByLabel('Describe the problem')).toHaveValue('Kitchen tap leaks under the sink.');
+  await page.getByRole('button', { name: 'Back' }).click();
   await expect(page.locator('input[name=service][value=plumbing]')).toBeChecked();
+  await next(page);
   await next(page);
   await expect(page.locator('#rf-town-select')).toHaveValue('Playa Flamingo');
   await next(page);
 
-  // Step 3
+  // Step 4
   await next(page);
   await expect(page.getByText('Tell us how soon you need it.')).toBeVisible();
   await choose(page, 'urgency', 'week');
   await choose(page, 'budget', '250-1000');
   await next(page);
 
-  // Step 4: consent is required, phone must be digits.
+  // Step 5: consent is required, phone must be digits.
   const send = page.getByRole('button', { name: 'Send my request' });
   await page.getByLabel('Name').fill('TEST – automated');
   await page.getByLabel('WhatsApp number').fill('abc');
@@ -159,7 +168,7 @@ test('analytics events fire for visitors who accepted cookies, and a filled hone
   await page.goto('/');
   await fillStep1(page);
   await next(page);
-  expect(await sentEvents(page)).toEqual(['form_started', 'form_step_completed']);
+  expect(await sentEvents(page)).toEqual(['form_started', 'form_step_completed', 'form_step_completed']);
 
   await page.getByLabel('Zone').selectOption('zone1');
   await page.locator('#rf-town-select').selectOption('Tamarindo');
@@ -181,6 +190,8 @@ test('analytics events fire for visitors who accepted cookies, and a filled hone
 test('a service page has that service already selected', async ({ page }) => {
   await page.goto('/services/pool-care');
   await expect(page.locator('input[name=service][value=pool-care]')).toBeChecked();
+  // With the service known, the form opens on the job step.
+  await expect(page.getByText('Step 2 of 5')).toBeVisible();
   await page.goto('/es/servicios/mantenimiento-piscinas');
   await expect(page.locator('input[name=service][value=pool-care]')).toBeChecked();
 });
@@ -204,15 +215,15 @@ test('the Spanish form works and sends the Spanish summary', async ({ page }) =>
   const posts = await interceptSubmit(page);
   await page.goto('/es/?test');
   await fillStep1(page, 'Describa el problema');
-  await page.getByRole('button', { name: 'Siguiente' }).click();
+  await next(page);
   await page.getByLabel('Zona').selectOption('zone1');
   await page.locator('#rf-town-select').selectOption('Huacas');
   await choose(page, 'property_type', 'house');
   await choose(page, 'on_site', 'owner');
-  await page.getByRole('button', { name: 'Siguiente' }).click();
+  await next(page);
   await choose(page, 'urgency', 'week');
   await choose(page, 'budget', 'unsure');
-  await page.getByRole('button', { name: 'Siguiente' }).click();
+  await next(page);
   await page.getByLabel('Nombre').fill('TEST – automated');
   await page.getByLabel('Número de WhatsApp').fill('88881234');
   await page.locator('input[name=consent]').check();

@@ -1,4 +1,4 @@
-// Turns the static request form into 4 steps: validation per step, photo
+// Turns the static request form into 5 steps: validation per step, photo
 // compression, submission to Netlify Forms, the thank-you state and the
 // WhatsApp hand-off. All visible text lives in the HTML, not here.
 
@@ -216,7 +216,8 @@ function init(root: HTMLElement, form: HTMLFormElement) {
     root.scrollIntoView({ block: 'start' });
   });
 
-  show(0, false);
+  // On a service page the service is already chosen, so start on the second step.
+  show(form.querySelector('input[name=service]:checked') ? 1 : 0, false);
 }
 
 /**
