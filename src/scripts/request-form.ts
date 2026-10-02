@@ -6,10 +6,6 @@ const MAX_PHOTOS = 5;
 const MAX_SIDE = 1600; // px, longest side after compression
 const QUALITY = 0.8;
 
-declare global {
-  interface Window { dataLayer?: unknown[] }
-}
-
 const root = document.querySelector<HTMLElement>('.rf');
 const form = root?.querySelector<HTMLFormElement>('.rf__form');
 if (root && form) init(root, form);
@@ -38,7 +34,7 @@ function init(root: HTMLElement, form: HTMLFormElement) {
 
   const track = (event: string, params: Record<string, unknown> = {}) => {
     if (isTest) return;
-    (window.dataLayer ||= []).push({ event, ...params });
+    window.tfTrack(event, params);
   };
 
   // --- Steps -------------------------------------------------------------

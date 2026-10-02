@@ -14,6 +14,13 @@ export const en = {
   // The link to the other language, shown in the header and footer.
   switchLang: { label: 'Español', lang: 'es', aria: 'Ver esta página en español' },
   logoAlt: 'TropiFix',
+  cookies: {
+    label: 'Cookies',
+    text: 'We use analytics cookies to see how the site is used. No ads.',
+    accept: 'Accept',
+    decline: 'Decline',
+    settings: 'Cookie settings',
+  },
   servicePage: {
     home: 'Home',
     services: 'Services',

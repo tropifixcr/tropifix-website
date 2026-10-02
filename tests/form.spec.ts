@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
+// Run against `npm run build:test` (a production-style build with a fake GA4 ID).
 // The submission is intercepted, never sent: no test lead can reach Netlify or the inbox.
 async function interceptSubmit(page: Page) {
   const posts: string[] = [];
@@ -26,6 +27,15 @@ async function bigPhoto(page: Page) {
   });
   return { name: 'leak.png', mimeType: 'image/png', buffer: Buffer.from(base64, 'base64') };
 }
+
+/** Names of the GA4 events pushed so far. */
+const sentEvents = (page: Page) =>
+  page.evaluate(() =>
+    (window.dataLayer as unknown as ArrayLike<unknown>[])
+      .map((entry) => Array.from(entry))
+      .filter((entry) => entry[0] === 'event')
+      .map((entry) => entry[1]),
+  );
 
 const choose = (page: Page, name: string, value: string) =>
   page.locator(`label:has(input[name=${name}][value="${value}"])`).click();
@@ -116,7 +126,7 @@ test('full run-through: validation, back and forward, photo, thank-you, WhatsApp
   }
 
   // Test runs never reach analytics.
-  expect(await page.evaluate(() => window.dataLayer ?? [])).toHaveLength(0);
+  expect(await sentEvents(page)).toEqual([]);
 });
 
 test('other zones get a text field and the honest confirmation', async ({ page }) => {
@@ -141,13 +151,15 @@ test('other zones get a text field and the honest confirmation', async ({ page }
   await expect(page.locator('[data-thanks=live]')).toBeHidden();
 });
 
-test('analytics events fire for real visitors, and a filled honeypot sends nothing', async ({ page }) => {
+test('analytics events fire for visitors who accepted cookies, and a filled honeypot sends nothing', async ({ page }) => {
   const posts = await interceptSubmit(page);
+  // Consent already given; the GA4 script itself is blocked so nothing reaches Google.
+  await page.route('**/www.googletagmanager.com/**', (route) => route.abort());
+  await page.addInitScript(() => localStorage.setItem('tf-consent', 'granted'));
   await page.goto('/');
   await fillStep1(page);
   await next(page);
-  const events = await page.evaluate(() => (window.dataLayer as { event: string }[]).map((e) => e.event));
-  expect(events).toEqual(['form_started', 'form_step_completed']);
+  expect(await sentEvents(page)).toEqual(['form_started', 'form_step_completed']);
 
   await page.getByLabel('Zone').selectOption('zone1');
   await page.locator('#rf-town-select').selectOption('Tamarindo');

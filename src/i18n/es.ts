@@ -14,6 +14,13 @@ export const es: Dict = {
   footer: { privacy: 'Privacidad', rights: 'TropiFix, Guanacaste, Costa Rica' },
   switchLang: { label: 'English', lang: 'en', aria: 'View this page in English' },
   logoAlt: 'TropiFix',
+  cookies: {
+    label: 'Cookies',
+    text: 'Usamos cookies de analítica para saber cómo se usa el sitio. Sin publicidad.',
+    accept: 'Aceptar',
+    decline: 'Rechazar',
+    settings: 'Configuración de cookies',
+  },
   servicePage: {
     home: 'Inicio',
     services: 'Servicios',
