@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Social templates — preview</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Nunito+Sans:wght@400;700&display=swap">
+<style>:root{--sand:#F6F1E7;--sand-deep:#ECE3D2;--teal:#026265;--teal-deep:#025A5C;--teal-tint:#D5E6E3;--coral:#F77051;--ink:#173332;--ink-muted:#4F6362;--on-teal:#FFFFFF;--font-display:Poppins,sans-serif;--font-body:"Nunito Sans",sans-serif;--space-2:8px;--space-4:16px;--space-6:24px;--radius-pill:999px;--radius-sm:6px;--radius-md:12px}
+  body { margin:0; background:var(--sand); color:var(--ink); font-family:var(--font-body); }
+  .row { display:flex; flex-wrap:wrap; gap:var(--space-6); padding:var(--space-4); align-items:flex-start; }
+  figure { margin:0; display:flex; flex-direction:column; gap:var(--space-2); }
+  figcaption { font-size:13px; line-height:18px; color:var(--ink-muted); }
+  figcaption b { color:var(--ink); }
+  .frame { position:relative; overflow:hidden; box-sizing:border-box; outline:1px solid var(--sand-deep); }
+  .post { width:360px; height:360px; }
+  .story { width:225px; height:400px; }
+  h2 { font-family:var(--font-display); margin:0; letter-spacing:-.01em; text-wrap:balance; }
+  p { margin:0; }
+
+  /* 1 · Tip post: sand, words first */
+  .tip { background:var(--sand); padding:24px; display:flex; flex-direction:column; gap:12px; }
+  .chip { align-self:flex-start; display:flex; align-items:center; gap:6px; background:var(--teal-tint); color:var(--teal-deep); border-radius:var(--radius-pill); padding:4px 10px 4px 6px; font-size:12px; font-weight:700; }
+  .chip img { width:16px; height:16px; }
+  .tip h2 { font-size:30px; line-height:34px; color:var(--teal-deep); }
+  .tip p { font-size:14px; line-height:21px; max-width:290px; }
+  .tip .foot { margin-top:auto; display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--ink-muted); }
+  .tip .foot img { height:26px; }
+  .mark { position:absolute; right:-18px; top:-18px; width:84px; height:84px; }
+
+  /* 2 · Job done post: photo + teal band */
+  .job { background:var(--teal); display:flex; flex-direction:column; }
+  .photo { flex:0 0 222px; background:var(--sand-deep); display:flex; align-items:center; justify-content:center; color:var(--ink-muted); font-size:13px; text-align:center; padding:0 24px; }
+  .band { flex:1; padding:16px 20px; display:flex; flex-direction:column; gap:4px; color:var(--on-teal); }
+  .band .kicker { font-size:11px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; }
+  .band h2 { font-size:21px; line-height:26px; }
+  .band .foot { margin-top:auto; display:flex; justify-content:space-between; align-items:flex-end; font-size:12px; }
+  .band .foot img { height:20px; }
+
+  /* 3 · Story: request a fix */
+  .ask { background:var(--teal); color:var(--on-teal); padding:52px 18px 71px; display:flex; flex-direction:column; gap:12px; }
+  .ask .logo { height:22px; align-self:flex-start; }
+  .ask h2 { font-size:24px; line-height:28px; margin-top:4px; }
+  .ask p { font-size:13px; line-height:19px; }
+  .cta { margin-top:auto; background:var(--coral); color:var(--ink); border-radius:var(--radius-pill); text-align:center; padding:10px 12px; font-weight:700; font-size:13px; }
+  .ask .url { text-align:center; font-size:12px; }
+  .safe { position:absolute; left:0; right:0; border-top:1px dashed var(--teal-tint); opacity:.5; }
+</style>
+</head>
+<body>
+<div class="row">
+  <figure>
+    <div class="frame post tip">
+      <svg class="mark" viewBox="0 0 84 84" aria-hidden="true"><g transform="translate(42 42)"><rect x="-36" y="-9" width="72" height="18" rx="9" transform="rotate(45)" fill="var(--coral)"/><rect x="-36" y="-9" width="72" height="18" rx="9" transform="rotate(-45)" fill="var(--coral)"/></g></svg>
+      <span class="chip"><img src="../Icons/pool-care.svg" alt="">Pool care tip</span>
+      <h2>Green pool after a big rain? Act within 24&nbsp;hours.</h2>
+      <p>Rain dilutes chlorine fast. Test the water the next morning, shock it if it's low, and keep the pump running. Away from home? We'll send a pool tech.</p>
+      <div class="foot"><img src="../Logos/tropifix-transparent.png" alt="TropiFix"><span>@tropifixcr</span></div>
+    </div>
+    <figcaption><b>Tip post</b> · 1080 × 1080<br>Sand ground, one coral mark</figcaption>
+  </figure>
+
+  <figure>
+    <div class="frame post job">
+      <div class="photo">Real photo of the finished job.<br>Natural light, no faces without permission.</div>
+      <div class="band">
+        <span class="kicker">AC &amp; HVAC · Playa Flamingo</span>
+        <h2>New mini-split installed before the dry-season heat.</h2>
+        <div class="foot"><span>Local pros for every fix.</span><img src="../Logos/tropifix-white.png" alt="TropiFix"></div>
+      </div>
+    </div>
+    <figcaption><b>Job done post</b> · 1080 × 1080<br>Photo on top, teal band below</figcaption>
+  </figure>
+
+  <figure>
+    <div class="frame story ask">
+      <div class="safe" style="top:52px"></div><div class="safe" style="bottom:71px"></div>
+      <img class="logo" src="../Logos/tropifix-white.png" alt="TropiFix">
+      <h2>Something broken at your place?</h2>
+      <p>Send us a photo and your area. We'll match you with a local pro, usually the same day.</p>
+      <div class="cta">Message us on WhatsApp</div>
+      <div class="url">tropifixcr.com</div>
+    </div>
+    <figcaption><b>Request story</b> · 1080 × 1920<br>Dashed lines mark the safe zone</figcaption>
+  </figure>
+</div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+/* TropiFix design tokens. Generated from tokens.json. Sand replaces white everywhere. */
+/* Fonts are loaded by each surface: the site self-hosts them (src/layouts/Base.astro), social-templates.html links Google Fonts. */
+:root {
+  --sand: #F6F1E7; /* Default background for every page, section and side area */
+  --sand-deep: #ECE3D2; /* Second surface on top of sand: cards, form panels, alternating sections, dividers. */
+  --teal: #026265; /* Primary brand colour, matching the logo background */
+  --teal-deep: #025A5C; /* Colour of the TropiFix wordmark */
+  --teal-tint: #D5E6E3; /* Soft teal fill for selected chips, info notes and zone tags */
+  --coral: #F77051; /* Accent colour, matching the logo's tools */
+  --coral-text: #B4452B; /* Coral for text and links on sand only (4.9:1) */
+  --ink: #173332; /* Body text on sand, sand-deep and teal-tint (12:1 on sand) */
+  --ink-muted: #4F6362; /* Secondary text, captions and form field borders on sand (5.7:1) and sand-deep (5.0:1). */
+  --on-teal: #FFFFFF; /* Text and icons on teal and teal-deep only (7.1:1) */
+  --font-display: Poppins, "Avenir Next", system-ui, sans-serif;
+  --font-body: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+  --space-2: 8px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-12: 48px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+}
+
+body { background: var(--sand); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 28px; }
+h1,h2,h3 { font-family: var(--font-display); color: var(--teal-deep); text-wrap: balance; }
+:focus-visible { outline: 2px solid var(--teal-deep); outline-offset: 2px; }

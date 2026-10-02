@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.astro/
+.netlify/
+.env
+.env.*
+.DS_Store
+
+# Private business documents: this repo is public
+Partner Outreach/
+docs/project-context.md
+
+# Local Claude skill bundles
+.claude/
+.github/prompts/
