@@ -1,0 +1,19 @@
+---
+// A required single-choice group of chips with its own error line.
+interface Props {
+  name: string;
+  label: string;
+  options: string[][];
+  error: string;
+}
+const { name, label, options, error } = Astro.props;
+---
+<fieldset class="rf__group" data-required={name}>
+  <legend>{label}</legend>
+  <div class="rf__chips">
+    {options.map(([value, text]) => (
+      <label class="rf__chip"><input type="radio" name={name} value={value} /><span>{text}</span></label>
+    ))}
+  </div>
+  <p class="rf__error" hidden>{error}</p>
+</fieldset>

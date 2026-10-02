@@ -4,35 +4,52 @@ import '@fontsource/poppins/latin-700.css';
 import '@fontsource/nunito-sans/latin-400.css';
 import '@fontsource/nunito-sans/latin-700.css';
 import '../../brand/tokens.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 import { indexable } from '../../site.config.mjs';
+import type { Dict } from '../i18n/en';
 
 interface Props {
+  t: Dict;
   title: string;
   description: string;
-  lang?: 'en' | 'es';
+  /** Keeps a page out of search engines even on the real domain (404). */
+  noindex?: boolean;
 }
-const { title, description, lang = 'en' } = Astro.props;
+const { t, title, description, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 <!doctype html>
-<html lang={lang}>
+<html lang={t.lang} class="no-js">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {!indexable && <meta name="robots" content="noindex, nofollow" />}
+    {(!indexable || noindex) && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script is:inline>document.documentElement.classList.remove('no-js');</script>
   </head>
   <body>
-    <slot />
+    <Header t={t} />
+    <main>
+      <slot />
+    </main>
+    <Footer t={t} />
+    <slot name="after" />
+    <script>
+      // Fade sections in once as they scroll into view.
+      const seen = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-visible');
+          seen.unobserve(entry.target);
+        }
+      }, { rootMargin: '0px 0px -10% 0px' });
+      document.querySelectorAll('.reveal').forEach((el) => seen.observe(el));
+    </script>
   </body>
 </html>
-
-<style is:global>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; }
-  img { max-width: 100%; height: auto; }
-</style>

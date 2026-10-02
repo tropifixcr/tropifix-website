@@ -12,4 +12,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Build, then check every page for broken links, missing files and SEO tags.
       - run: npm run build
+      # Run the request form end to end at phone and desktop size.
+      - run: npx playwright install --with-deps chromium
+      - run: npm test

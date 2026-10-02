@@ -13,3 +13,5 @@ docs/project-context.md
 # Local Claude skill bundles
 .claude/
 .github/prompts/
+test-results/
+playwright-report/

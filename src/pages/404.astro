@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import { en } from '../i18n/en';
+---
+<Base t={en} title="Page not found | TropiFix" description="This page doesn't exist. Head back to TropiFix to request a fix." noindex>
+  <section class="section">
+    <div class="wrap">
+      <h1>We can't find that page</h1>
+      <p>The link may be old or mistyped. The home page has everything, including the request form.</p>
+      <p><a class="btn btn--coral" href={`${en.home}#request`}>{en.cta}</a></p>
+    </div>
+  </section>
+</Base>

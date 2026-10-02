@@ -13,6 +13,8 @@ npm run dev
 
 `npm run build` builds the site into `dist/` and then runs `scripts/check-dist.mjs`, which fails the build on any broken internal link, missing image or missing SEO tag.
 
+`npm test` runs the request form end to end in a browser at phone and desktop size (build first). The tests intercept the submission, so no test lead is ever sent. To try the form by hand without it counting as a real lead, open the page with `?test` at the end of the address: the email subject then starts with `[TEST]` and analytics are skipped.
+
 ## How deploys work
 
 - Nobody pushes to `main`. Work happens on a branch and goes through a pull request.
@@ -27,3 +29,8 @@ Values are set in Netlify, never in the code.
 | Variable | What it is |
 | --- | --- |
 | `SITE_URL` | The public address. Unset while on `netlify.app`; search engines are blocked until it points at the real domain. |
+| `PUBLIC_WHATSAPP_NUMBER` | The central WhatsApp number, digits only with country code (for example `506...`). |
+| `PUBLIC_CONTACT_EMAIL` | The email shown in the footer and on the privacy page. |
+| `PUBLIC_LEGAL_ENTITY_NAME` | Who is responsible for the data, shown on the privacy page. |
+
+The email that receives leads is set in Netlify under Forms → Form notifications, not in the code.
