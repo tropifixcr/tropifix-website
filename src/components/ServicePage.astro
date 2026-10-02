@@ -1,0 +1,104 @@
+---
+// One template for all 21 service pages in both languages. Copy comes from
+// src/data/services.en.ts and services.es.ts.
+import Base from '../layouts/Base.astro';
+import Icon from './Icon.astro';
+import RequestForm from './RequestForm.astro';
+import StickyBar from './StickyBar.astro';
+import { services, servicePath, type Service, type ServiceCopy } from '../data/services';
+import { serviceSchema, faqSchema, breadcrumbSchema } from '../data/schema';
+import type { Dict } from '../i18n/en';
+
+interface Props { t: Dict; service: Service; copy: ServiceCopy }
+const { t, service, copy } = Astro.props;
+const lang = t.lang as 'en' | 'es';
+const p = t.servicePage;
+const path = servicePath(service, lang);
+const related = service.related.map((id) => services.find((s) => s.id === id)!);
+const crumbs: [string, string][] = [[p.home, t.home], [p.services, `${t.home}#services`], [service[lang], path]];
+---
+<Base
+  t={t}
+  title={copy.title}
+  description={copy.description}
+  paths={{ en: servicePath(service, 'en'), es: servicePath(service, 'es') }}
+  schema={[
+    serviceSchema(Astro.site!, service[lang], copy.description, path),
+    faqSchema(copy.faqs),
+    breadcrumbSchema(Astro.site!, crumbs),
+  ]}
+  hasForm
+>
+  <section class="section">
+    <div class="wrap sp">
+      <div class="sp__main">
+        <nav aria-label={p.breadcrumb}>
+          <ol class="crumbs">
+            <li><a href={t.home}>{p.home}</a></li>
+            <li><a href={`${t.home}#services`}>{p.services}</a></li>
+            <li aria-current="page">{service[lang]}</li>
+          </ol>
+        </nav>
+        <span class="sp__icon"><Icon id={service.id} size={48} /></span>
+        <h1>{copy.h1}</h1>
+        <p class="sp__intro">{copy.intro}</p>
+
+        <h2>{p.jobs}</h2>
+        <ul class="sp__jobs">{copy.jobs.map((job) => <li>{job}</li>)}</ul>
+
+        <h2>{p.why}</h2>
+        <p>{copy.why}</p>
+        <p>{p.area}</p>
+
+        <h2>{p.faq}</h2>
+        <div class="faq">
+          {copy.faqs.map(([q, a]) => (
+            <details>
+              <summary>{q}</summary>
+              <p>{a}</p>
+            </details>
+          ))}
+        </div>
+
+        <h2>{p.related}</h2>
+        <ul class="sp__related">
+          {related.map((r) => (
+            <li><a href={servicePath(r, lang)}><Icon id={r.id} />{r[lang]}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div class="sp__form"><RequestForm t={t} service={service.id} /></div>
+    </div>
+  </section>
+  <StickyBar slot="after" t={t} />
+</Base>
+
+<style>
+  .sp { display: grid; gap: var(--space-12); }
+  .sp__main { display: grid; gap: var(--space-4); align-content: start; }
+  .sp__main h2 { margin-top: var(--space-6); }
+  .sp__intro { font-size: 20px; line-height: 30px; }
+  .sp__icon { line-height: 0; }
+  .crumbs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; font-size: 14px; line-height: 22px; }
+  .crumbs li + li::before { content: '/'; margin-inline: var(--space-2); color: var(--ink-muted); }
+  .crumbs a { display: inline-block; padding-block: 13px; }
+  .crumbs [aria-current] { padding-block: 13px; color: var(--ink-muted); }
+  .sp__jobs { margin: 0; padding-left: var(--space-6); display: grid; gap: var(--space-2); }
+  .faq { display: grid; gap: var(--space-2); }
+  .faq details { background: var(--sand-deep); border-radius: var(--radius-md); }
+  .faq summary { cursor: pointer; font-weight: 700; padding: var(--space-4); min-height: 48px; border-radius: var(--radius-md); }
+  .faq p { padding: 0 var(--space-4) var(--space-4); }
+  .sp__related { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .sp__related a {
+    display: inline-flex; align-items: center; gap: var(--space-2); min-height: 48px;
+    padding: var(--space-2) var(--space-4); background: var(--sand-deep); border-radius: var(--radius-md);
+    color: var(--ink); font-weight: 700; text-decoration: none;
+  }
+  /* On a sand page the form sits on a sand-deep panel with sand controls. */
+  .sp__form :global(.rf) { background: var(--sand-deep); }
+  .sp__form :global(.rf__tile span), .sp__form :global(.rf__chip span), .sp__form :global(.rf__bar) { background: var(--sand); }
+  .sp__form :global(.rf__tile input:checked + span), .sp__form :global(.rf__chip input:checked + span) { background: var(--teal-tint); }
+  @media (min-width: 900px) {
+    .sp { grid-template-columns: 1fr minmax(0, 520px); align-items: start; }
+  }
+</style>

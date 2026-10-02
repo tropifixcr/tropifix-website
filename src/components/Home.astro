@@ -3,16 +3,24 @@ import Base from '../layouts/Base.astro';
 import Icon from './Icon.astro';
 import RequestForm from './RequestForm.astro';
 import StickyBar from './StickyBar.astro';
-import { services } from '../data/services';
+import { services, servicePath } from '../data/services';
 import { zone1Towns } from '../data/zones';
 import { whatsappUrl } from '../data/settings';
+import { organization, faqSchema } from '../data/schema';
 import type { Dict } from '../i18n/en';
 
 interface Props { t: Dict }
 const { t } = Astro.props;
 const lang = t.lang as 'en' | 'es';
 ---
-<Base t={t} title={t.meta.title} description={t.meta.description}>
+<Base
+  t={t}
+  title={t.meta.title}
+  description={t.meta.description}
+  paths={{ en: '/', es: '/es/' }}
+  schema={[organization(Astro.site!, lang), faqSchema(t.faq.items.map((i) => [i.q, i.a]))]}
+  hasForm
+>
   <!-- Hero. The teal field is a placeholder for the poster image and video loop. -->
   <section class="hero">
     <div class="wrap hero__in">
@@ -34,7 +42,7 @@ const lang = t.lang as 'en' | 'es';
       <ul class="tiles">
         {services.map((s) => (
           <li>
-            <a href="#request" data-pick-service={s.id}>
+            <a href={servicePath(s, lang)}>
               <Icon id={s.id} size={32} />
               {s[lang]}
             </a>
@@ -97,19 +105,6 @@ const lang = t.lang as 'en' | 'es';
 
   <StickyBar slot="after" t={t} />
 </Base>
-
-<script>
-  // A service tile pre-selects that service in the form.
-  document.querySelectorAll<HTMLElement>('[data-pick-service]').forEach((tile) =>
-    tile.addEventListener('click', () => {
-      const radio = document.querySelector<HTMLInputElement>(`.rf input[name=service][value="${tile.dataset.pickService}"]`);
-      if (radio) radio.checked = true;
-    }),
-  );
-  document.querySelectorAll('[data-track]').forEach((el) =>
-    el.addEventListener('click', () => (window.dataLayer ||= []).push({ event: (el as HTMLElement).dataset.track })),
-  );
-</script>
 
 <style>
   .hero { background: var(--teal); color: var(--on-teal); padding-block: var(--space-6) var(--space-12); }

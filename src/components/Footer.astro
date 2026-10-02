@@ -3,13 +3,13 @@ import { Image } from 'astro:assets';
 import logo from '../../Logos/tropifix-white.png';
 import { whatsappUrl, contactEmail } from '../data/settings';
 import type { Dict } from '../i18n/en';
-interface Props { t: Dict }
-const { t } = Astro.props;
+interface Props { t: Dict; switchTo: string }
+const { t, switchTo } = Astro.props;
 ---
 <footer class="footer">
   <div class="wrap footer__in">
     <div>
-      <Image src={logo} alt="TropiFix" widths={[180, 360]} sizes="180px" width={180} />
+      <Image src={logo} alt={t.logoAlt} widths={[180, 360]} sizes="180px" width={180} />
       <p>{t.tagline}</p>
     </div>
     <ul class="footer__links">
@@ -18,6 +18,7 @@ const { t } = Astro.props;
       <li><a href="https://www.instagram.com/tropifixcr" target="_blank" rel="noopener">Instagram</a></li>
       <li><a href="https://www.facebook.com/tropifixcr" target="_blank" rel="noopener">Facebook</a></li>
       <li><a href={t.privacy}>{t.footer.privacy}</a></li>
+      <li><a href={switchTo} lang={t.switchLang.lang} hreflang={t.switchLang.lang}>{t.switchLang.label}</a></li>
     </ul>
     <p class="footer__small">{t.footer.rights}</p>
   </div>

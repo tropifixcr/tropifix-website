@@ -5,10 +5,25 @@ export const en = {
   home: '/',
   privacy: '/privacy',
   cta: 'Request a fix',
+  // Shown in the header on narrow phones, where the logo must stay at least 120px wide.
+  ctaShort: 'Request a fix',
   whatsapp: 'Message us on WhatsApp',
   tagline: 'Local pros for every fix.',
   nav: { services: 'Services', how: 'How it works', zones: 'Where we work', faq: 'Questions' },
   footer: { privacy: 'Privacy', rights: 'TropiFix, Guanacaste, Costa Rica' },
+  // The link to the other language, shown in the header and footer.
+  switchLang: { label: 'Español', lang: 'es', aria: 'Ver esta página en español' },
+  logoAlt: 'TropiFix',
+  servicePage: {
+    home: 'Home',
+    services: 'Services',
+    breadcrumb: 'Breadcrumb',
+    jobs: 'Common jobs',
+    why: 'Why it matters in Guanacaste',
+    faq: 'Questions',
+    related: 'Related services',
+    area: 'We cover Playa Langosta, Tamarindo, Playa Grande, Conchal, Brasilito, Flamingo, Potrero, Las Catalinas and Huacas.',
+  },
 
   meta: {
     title: 'TropiFix: local pros for every fix in Guanacaste',
@@ -21,7 +36,7 @@ export const en = {
   },
   services: {
     title: 'What needs fixing?',
-    lead: 'Pick a trade to start your request.',
+    lead: 'Pick a trade to see what we cover.',
   },
   how: {
     title: 'How it works',

@@ -31,10 +31,10 @@ const choose = (page: Page, name: string, value: string) =>
   page.locator(`label:has(input[name=${name}][value="${value}"])`).click();
 const next = (page: Page) => page.getByRole('button', { name: 'Next' }).click();
 
-async function fillStep1(page: Page) {
+async function fillStep1(page: Page, descriptionLabel = 'Describe the problem') {
   await choose(page, 'service', 'plumbing');
   await choose(page, 'job_type', 'repair');
-  await page.getByLabel('Describe the problem').fill('Kitchen tap leaks under the sink.');
+  await page.getByLabel(descriptionLabel).fill('Kitchen tap leaks under the sink.');
 }
 
 test('full run-through: validation, back and forward, photo, thank-you, WhatsApp', async ({ page }) => {
@@ -166,8 +166,52 @@ test('analytics events fire for real visitors, and a filled honeypot sends nothi
   expect(posts).toHaveLength(0);
 });
 
-test('a service tile pre-selects that service in the form', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('[data-pick-service=pool-care]').click();
+test('a service page has that service already selected', async ({ page }) => {
+  await page.goto('/services/pool-care');
   await expect(page.locator('input[name=service][value=pool-care]')).toBeChecked();
+  await page.goto('/es/servicios/mantenimiento-piscinas');
+  await expect(page.locator('input[name=service][value=pool-care]')).toBeChecked();
+});
+
+test('the language toggle leads to the matching page, not the home page', async ({ page }) => {
+  for (const [from, to] of [
+    ['/', '/es/'],
+    ['/services/ac-repair', '/es/servicios/reparacion-aire-acondicionado'],
+    ['/privacy', '/es/privacidad'],
+  ]) {
+    await page.goto(from);
+    await page.locator('[data-lang-switch]').click();
+    await expect(page).toHaveURL(new RegExp(`${to}$`));
+    await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+    await page.locator('[data-lang-switch]').click();
+    await expect(page).toHaveURL(new RegExp(`${from}$`));
+  }
+});
+
+test('the Spanish form works and sends the Spanish summary', async ({ page }) => {
+  const posts = await interceptSubmit(page);
+  await page.goto('/es/?test');
+  await fillStep1(page, 'Describa el problema');
+  await page.getByRole('button', { name: 'Siguiente' }).click();
+  await page.getByLabel('Zona').selectOption('zone1');
+  await page.locator('#rf-town-select').selectOption('Huacas');
+  await choose(page, 'property_type', 'house');
+  await choose(page, 'on_site', 'owner');
+  await page.getByRole('button', { name: 'Siguiente' }).click();
+  await choose(page, 'urgency', 'week');
+  await choose(page, 'budget', 'unsure');
+  await page.getByRole('button', { name: 'Siguiente' }).click();
+  await page.getByLabel('Nombre').fill('TEST – automated');
+  await page.getByLabel('Número de WhatsApp').fill('88881234');
+  await page.locator('input[name=consent]').check();
+  await page.getByRole('button', { name: 'Enviar mi solicitud' }).click();
+  await expect(page.getByRole('heading', { name: 'Gracias, TEST – automated.' })).toBeVisible();
+  expect(posts[0]).toContain('[TEST] Nueva solicitud: Fontanería, Huacas');
+  const href = await page.getByRole('link', { name: 'Continuar por WhatsApp' }).getAttribute('href');
+  expect(decodeURIComponent(href!)).toContain('Servicio: Fontanería');
+});
+
+test('a made-up address shows the 404 page', async ({ page }) => {
+  await page.goto('/404');
+  await expect(page.getByRole('heading', { name: 'We can’t find that page' }).or(page.getByRole('heading', { name: "We can't find that page" }))).toBeVisible();
 });
