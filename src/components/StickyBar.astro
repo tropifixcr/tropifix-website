@@ -1,0 +1,35 @@
+---
+// Phone-only bar that slides in once the request form has scrolled out of view,
+// so it can never cover a form field.
+import type { Dict } from '../i18n/en';
+interface Props { t: Dict }
+const { t } = Astro.props;
+---
+<aside class="sticky" data-sticky aria-label={t.cta}>
+  <a href="#request" class="btn btn--coral">{t.cta}</a>
+</aside>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-sticky]');
+  const form = document.querySelector('#request');
+  if (bar && form) {
+    bar.inert = true;
+    new IntersectionObserver(([entry]) => {
+      const show = !entry.isIntersecting;
+      bar.classList.toggle('is-shown', show);
+      bar.inert = !show;
+    }).observe(form);
+  }
+</script>
+
+<style>
+  .sticky {
+    position: fixed; inset: auto 0 0 0; z-index: 10;
+    padding: var(--space-2) var(--space-4) calc(var(--space-2) + env(safe-area-inset-bottom));
+    background: var(--sand); border-top: 1.5px solid var(--sand-deep);
+    transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .sticky.is-shown { transform: none; }
+  .sticky .btn { width: 100%; }
+  @media (min-width: 768px) { .sticky { display: none; } }
+</style>

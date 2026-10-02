@@ -1,0 +1,288 @@
+---
+// The request form: the site's one job. Rendered as plain static HTML with every
+// field name present, so Netlify Forms detects it at build time and it still
+// works (as one long form, without photos) if JavaScript fails.
+// src/scripts/request-form.ts turns it into 4 steps.
+import Icon from './Icon.astro';
+import ChipGroup from './ChipGroup.astro';
+import { services, otherService } from '../data/services';
+import { zones, zone1Towns } from '../data/zones';
+import { whatsappNumber } from '../data/settings';
+import type { Dict } from '../i18n/en';
+
+interface Props {
+  t: Dict;
+  /** Service id to pre-select (service pages). */
+  service?: string;
+}
+const { t, service } = Astro.props;
+const f = t.form;
+const lang = t.lang as 'en' | 'es';
+const tiles = [...services, otherService];
+const liveZones = zones.filter((z) => z.live).map((z) => z.id);
+const codes = ['+506', '+1', '+44', '+49', '+33', '+34', '+31', '+41', '+39', '+52'];
+
+const groups = {
+  job_type: { label: f.jobType, options: f.jobTypes, error: f.errors.jobType },
+  property_type: { label: f.property, options: f.properties, error: f.errors.property },
+  on_site: { label: f.onsite, options: f.onsites, error: f.errors.onsite },
+  urgency: { label: f.urgency, options: f.urgencies, error: f.errors.urgency },
+  budget: { label: f.budget, options: f.budgets, error: f.errors.budget },
+};
+---
+<div class="rf" id="request">
+  <form
+    class="rf__form"
+    name="request"
+    method="POST"
+    action={t.home}
+    enctype="multipart/form-data"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    data-live-zones={liveZones.join(',')}
+    data-whatsapp={whatsappNumber}
+    data-summary={JSON.stringify(f.summary)}
+    data-step-label={f.stepOf}
+    data-sending={f.sending}
+  >
+    <input type="hidden" name="form-name" value="request" />
+    <input type="hidden" name="subject" value={f.summary.subject} />
+    <input type="hidden" name="page_language" value={lang} />
+    <input type="hidden" name="test" value="" />
+    <p class="rf__hp" aria-hidden="true">
+      <label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+    </p>
+
+    <h2 class="rf__title">{f.title}</h2>
+    <div class="rf__progress" hidden>
+      <p class="small rf__step-label" aria-live="polite"></p>
+      <div class="rf__bar"><span></span></div>
+    </div>
+
+    <!-- Step 1 -->
+    <fieldset class="rf__step" data-step="1">
+      <legend>{f.steps[0]}</legend>
+
+      <fieldset class="rf__group" data-required="service">
+        <legend>{f.service}</legend>
+        <div class="rf__tiles">
+          {tiles.map((s) => (
+            <label class="rf__tile">
+              <input type="radio" name="service" value={s.id} checked={s.id === service} />
+              <span>
+                <Icon id={s.id} />
+                {s[lang]}
+              </span>
+            </label>
+          ))}
+        </div>
+        <p class="rf__error" hidden>{f.errors.service}</p>
+      </fieldset>
+
+      <ChipGroup name="job_type" {...groups.job_type} />
+
+      <div class="rf__field">
+        <label for="rf-description">{f.description}</label>
+        <textarea id="rf-description" name="description" rows="4" required placeholder={f.descriptionPlaceholder}></textarea>
+        <p class="rf__error" hidden>{f.errors.description}</p>
+      </div>
+
+      <div class="rf__field rf__photos" hidden>
+        <span class="rf__label">{f.photos}</span>
+        <p class="small" id="rf-photos-hint">{f.photosHint}</p>
+        <ul class="rf__thumbs" data-remove-label={f.photosRemove}></ul>
+        <label class="btn btn--outline rf__photo-btn">
+          {f.photosAdd}
+          <input type="file" id="rf-photo-picker" class="sr-only" accept="image/*" multiple aria-describedby="rf-photos-hint" />
+        </label>
+        <p class="rf__error" hidden>{f.errors.photos}</p>
+        <!-- One file per field is a Netlify Forms rule. Filled by the script. -->
+        {[1, 2, 3, 4, 5].map((n) => <input type="file" name={`photo${n}`} hidden />)}
+      </div>
+    </fieldset>
+
+    <!-- Step 2 -->
+    <fieldset class="rf__step" data-step="2">
+      <legend>{f.steps[1]}</legend>
+
+      <div class="rf__field">
+        <label for="rf-zone">{f.zone}</label>
+        <select id="rf-zone" name="zone" required>
+          <option value="">{f.choose}</option>
+          {zones.map((z) => <option value={z.id}>{z.name}</option>)}
+          <option value="elsewhere">{f.zoneElsewhere}</option>
+        </select>
+        <p class="rf__error" hidden>{f.errors.zone}</p>
+      </div>
+
+      <div class="rf__field">
+        <div data-town-select hidden>
+          <label for="rf-town-select">{f.town}</label>
+          <select id="rf-town-select">
+            <option value="">{f.choose}</option>
+            {zone1Towns.map((town) => <option>{town}</option>)}
+            <option value="other">{f.townOther}</option>
+          </select>
+        </div>
+        <div data-town-text>
+          <label for="rf-town">{f.townText}</label>
+          <input id="rf-town" name="town" type="text" required autocomplete="address-level2" />
+        </div>
+        <p class="rf__error" hidden>{f.errors.town}</p>
+      </div>
+
+      <ChipGroup name="property_type" {...groups.property_type} />
+      <ChipGroup name="on_site" {...groups.on_site} />
+    </fieldset>
+
+    <!-- Step 3 -->
+    <fieldset class="rf__step" data-step="3">
+      <legend>{f.steps[2]}</legend>
+      <ChipGroup name="urgency" {...groups.urgency} />
+      <ChipGroup name="budget" {...groups.budget} />
+    </fieldset>
+
+    <!-- Step 4 -->
+    <fieldset class="rf__step" data-step="4">
+      <legend>{f.steps[3]}</legend>
+
+      <div class="rf__field">
+        <label for="rf-name">{f.name}</label>
+        <input id="rf-name" name="name" type="text" required autocomplete="name" />
+        <p class="rf__error" hidden>{f.errors.name}</p>
+      </div>
+
+      <div class="rf__field">
+        <label for="rf-phone">{f.phone}</label>
+        <div class="rf__phone">
+          <select name="country_code" aria-label={f.countryCode} autocomplete="tel-country-code">
+            {codes.map((c) => <option>{c}</option>)}
+          </select>
+          <input id="rf-phone" name="phone" type="tel" required inputmode="tel" autocomplete="tel-national" />
+        </div>
+        <p class="rf__error" hidden>{f.errors.phone}</p>
+      </div>
+
+      <div class="rf__field">
+        <label for="rf-email">{f.email}</label>
+        <input id="rf-email" name="email" type="email" autocomplete="email" />
+        <p class="rf__error" hidden>{f.errors.email}</p>
+      </div>
+
+      <fieldset class="rf__group">
+        <legend>{f.language}</legend>
+        <div class="rf__chips">
+          <label class="rf__chip"><input type="radio" name="preferred_language" value="English" checked={lang === 'en'} /><span>English</span></label>
+          <label class="rf__chip"><input type="radio" name="preferred_language" value="Español" checked={lang === 'es'} /><span>Español</span></label>
+        </div>
+      </fieldset>
+
+      <div class="rf__field">
+        <label class="rf__consent">
+          <input type="checkbox" name="consent" value="yes" required />
+          <span>{f.consent} <a href={t.privacy} target="_blank" rel="noopener">{f.consentLink}</a></span>
+        </label>
+        <p class="rf__error" hidden>{f.errors.consent}</p>
+      </div>
+    </fieldset>
+
+    <p class="rf__error rf__send-error" role="alert" hidden>{f.errors.send}</p>
+    <div class="rf__nav">
+      <button type="button" class="btn btn--outline rf__back" hidden>{f.back}</button>
+      <button type="button" class="btn btn--teal rf__next" hidden>{f.next}</button>
+      <button type="submit" class="btn btn--coral rf__submit">{f.submit}</button>
+    </div>
+  </form>
+
+  <div class="rf__thanks" tabindex="-1" hidden>
+    <svg class="rf__check" viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" />
+    </svg>
+    <h2 data-template={f.thanks.title}></h2>
+    <p data-thanks="live" hidden>{f.thanks.live}</p>
+    <p data-thanks="other" hidden>{f.thanks.other}</p>
+    <a class="btn btn--teal rf__wa" href="#" target="_blank" rel="noopener">{f.thanks.whatsapp}</a>
+    <p class="small">{f.thanks.whatsappHint}</p>
+  </div>
+</div>
+
+<script>
+  import '../scripts/request-form.ts';
+</script>
+
+<style is:global>
+  .rf { background: var(--sand); color: var(--ink); border-radius: var(--radius-md); padding: var(--space-6) var(--space-4); }
+  .rf__form { display: grid; gap: var(--space-6); }
+  .rf__title { font-size: 20px; line-height: 28px; }
+  .rf__hp { position: absolute; left: -9999px; }
+  .rf fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .rf__step { display: grid; gap: var(--space-6); }
+  .rf__step > legend { font: 600 20px/28px var(--font-display); color: var(--teal-deep); padding: 0; margin-bottom: var(--space-4); }
+  .rf__group > legend, .rf__field label:not(.btn, .rf__consent), .rf__label { display: block; font-weight: 700; padding: 0; margin-bottom: var(--space-2); }
+  .rf__field { display: grid; }
+  [data-town-select]:not([hidden]) + [data-town-text]:not([hidden]) { margin-top: var(--space-4); }
+
+  .rf input[type='text'], .rf input[type='tel'], .rf input[type='email'], .rf select, .rf textarea {
+    width: 100%; min-height: 48px; padding: var(--space-2) var(--space-4);
+    font: 400 17px/28px var(--font-body); color: var(--ink);
+    background: var(--sand); border: 1.5px solid var(--ink-muted); border-radius: var(--radius-sm);
+    caret-color: var(--teal);
+  }
+  .rf ::placeholder { color: var(--ink-muted); opacity: 1; }
+  .rf [aria-invalid='true'] { border-color: var(--coral-text); }
+  .rf__error { color: var(--coral-text); font-weight: 700; margin-top: var(--space-2); }
+
+  /* Tiles and chips: a hidden radio with a styled label. */
+  .rf__tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--space-2); }
+  .rf__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .rf__tile, .rf__chip { position: relative; display: block; cursor: pointer; }
+  .rf__tile input, .rf__chip input { position: absolute; opacity: 0; inset: 0; margin: 0; pointer-events: none; }
+  .rf__tile span, .rf__chip span {
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    min-height: 48px; background: var(--sand-deep); border: 1.5px solid transparent;
+    transition: transform 0.15s ease-out;
+  }
+  .rf__tile span { flex-direction: column; gap: var(--space-2); height: 100%; padding: var(--space-4) var(--space-2); border-radius: var(--radius-md); font-size: 14px; line-height: 18px; }
+  .rf__chip span { padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm); }
+  .rf__tile:hover span, .rf__chip:hover span { transform: translateY(-2px); }
+  .rf__tile input:active + span { transform: scale(0.97); }
+  .rf__tile input:checked + span, .rf__chip input:checked + span { background: var(--teal-tint); border-color: var(--teal); font-weight: 700; }
+  .rf__tile input:focus-visible + span, .rf__chip input:focus-visible + span { outline: 2px solid var(--teal-deep); outline-offset: 2px; }
+
+  .rf__phone { display: grid; grid-template-columns: 104px 1fr; gap: var(--space-2); }
+  .rf__consent { display: grid; grid-template-columns: 28px 1fr; gap: var(--space-2); font-weight: 400; cursor: pointer; }
+  .rf__consent input { width: 24px; height: 24px; margin: 2px 0 0; accent-color: var(--teal); }
+
+  .rf__photo-btn { justify-self: start; margin-top: var(--space-2); }
+  .rf__photo-btn:focus-within { outline: 2px solid var(--teal-deep); outline-offset: 2px; }
+  .rf__thumbs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .rf__thumbs li { position: relative; }
+  .rf__thumbs img { display: block; width: 72px; height: 72px; object-fit: cover; border-radius: var(--radius-sm); }
+  .rf__thumbs button {
+    position: absolute; inset: 0; width: 100%; border: 0; border-radius: var(--radius-sm); cursor: pointer;
+    background: transparent; color: transparent; font-size: 14px;
+  }
+  .rf__thumbs button:hover, .rf__thumbs button:focus-visible { background: var(--ink); color: var(--on-teal); opacity: 0.85; }
+
+  .rf__nav { display: flex; gap: var(--space-2); justify-content: space-between; }
+  .rf__nav .rf__next, .rf__nav .rf__submit { margin-left: auto; }
+
+  /* Stepped mode (script adds .is-stepped): one step at a time, sliding in. */
+  .rf__bar { height: 6px; background: var(--sand-deep); border-radius: var(--radius-pill); overflow: hidden; margin-top: var(--space-2); }
+  .rf__bar span { display: block; height: 100%; background: var(--teal); transform-origin: left; transform: scaleX(0.25); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .rf__form.is-stepped .rf__step:not(.is-active) { display: none; }
+  .rf__form.is-stepped .rf__step.is-active { animation: rf-in 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+  .rf__form.is-stepped.is-back .rf__step.is-active { animation-name: rf-in-back; }
+  @keyframes rf-in { from { opacity: 0; transform: translateX(24px); } }
+  @keyframes rf-in-back { from { opacity: 0; transform: translateX(-24px); } }
+
+  .rf__thanks { display: grid; gap: var(--space-4); justify-items: start; }
+  .rf__thanks[hidden] { display: none; }
+  .rf__thanks h2 { font-size: 20px; line-height: 28px; }
+  .rf__check { color: var(--teal); animation: rf-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+  .rf__check path { stroke-dasharray: 10; stroke-dashoffset: 10; animation: rf-draw 0.4s 0.3s ease-out forwards; }
+  @keyframes rf-pop { from { opacity: 0; transform: scale(0.6); } }
+  @keyframes rf-draw { to { stroke-dashoffset: 0; } }
+
+  @media (min-width: 480px) { .rf { padding: var(--space-6); } }
+</style>

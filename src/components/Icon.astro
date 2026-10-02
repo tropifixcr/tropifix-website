@@ -1,0 +1,18 @@
+---
+// Inlines a service icon from /Icons. The files are used as supplied; only the
+// embedded metadata blob and fixed size are dropped from the HTML output.
+interface Props {
+  id: string;
+  size?: number;
+}
+const { id, size = 24 } = Astro.props;
+const files = import.meta.glob('../../Icons/*.svg', { query: '?raw', import: 'default', eager: true });
+const raw = files[`../../Icons/${id}.svg`] as string;
+if (!raw) throw new Error(`No icon for "${id}" in /Icons`);
+const svg = raw
+  .replace(/<!--[\s\S]*?-->/g, '')
+  .replace(/<metadata>[\s\S]*?<\/metadata>/g, '')
+  .replace(/\sxmlns:c2pa="[^"]*"/, '')
+  .replace(/width="24"\s+height="24"/, `width="${size}" height="${size}" aria-hidden="true"`);
+---
+<Fragment set:html={svg} />

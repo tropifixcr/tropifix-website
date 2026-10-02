@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import { es } from '../../i18n/es';
+import { contactEmail, legalEntity } from '../../data/settings';
+---
+<Base t={es} title="Privacidad | TropiFix" description="Qué datos recoge TropiFix cuando usted envía una solicitud, con quién los compartimos y cómo pedir que los eliminemos." paths={{ en: '/privacy', es: '/es/privacidad' }}>
+  <section class="section">
+    <div class="wrap prose">
+      <h1>Privacidad</h1>
+      <p>Esta página explica qué hacemos con la información que usted nos envía, de acuerdo con la Ley 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales de Costa Rica.</p>
+
+      <h2>Quién es responsable</h2>
+      <p>{legalEntity || <mark>[Nombre de la persona jurídica, por agregar antes del lanzamiento]</mark>}, que opera como TropiFix, Guanacaste, Costa Rica.</p>
+
+      <h2>Qué datos recogemos</h2>
+      <p>Solo lo que usted escribe en el formulario de solicitud: el servicio que necesita, su descripción y fotos, la zona, el lugar y el tipo de propiedad, quién está en la propiedad, los plazos y el presupuesto, su nombre, su número de WhatsApp, su correo si lo indica y su idioma de preferencia.</p>
+
+      <h2>Para qué los usamos</h2>
+      <p>Para atender su solicitud: asignarle un profesional local, contactarle por WhatsApp y confirmar que el profesional se comunicó con usted.</p>
+
+      <h2>Con quién los compartimos</h2>
+      <p>Con un solo proveedor local del oficio que usted solicitó, y únicamente después de que marque la casilla de consentimiento del formulario. No vendemos sus datos ni los usamos para listas de publicidad.</p>
+      <p>El sitio está alojado en Netlify, que guarda los envíos del formulario por cuenta nuestra.</p>
+
+      <h2>Cookies y analítica</h2>
+      <p>Si usted acepta las cookies de analítica, usamos Google Analytics 4 para contar visitas y pasos del formulario. Si las rechaza, no se instala ninguna cookie de analítica.</p>
+
+      <h2>Cuánto tiempo los conservamos</h2>
+      <p><mark>[Plazo de conservación por confirmar]</mark></p>
+
+      <h2>Sus derechos</h2>
+      <p>
+        Usted puede pedir en cualquier momento ver, corregir o eliminar sus datos.
+        {contactEmail
+          ? <>Escríbanos a <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.</>
+          : <mark>[Correo de contacto por agregar]</mark>}
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .prose h2 { margin-top: var(--space-4); }
+  mark { background: var(--teal-tint); color: var(--ink); padding: 0 var(--space-2); border-radius: var(--radius-sm); }
+</style>

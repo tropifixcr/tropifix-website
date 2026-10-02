@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import { en } from '../i18n/en';
+import { contactEmail, legalEntity } from '../data/settings';
+---
+<Base t={en} title="Privacy | TropiFix" description="What TropiFix collects when you send a request, who we share it with, and how to ask us to delete it." paths={{ en: '/privacy', es: '/es/privacidad' }}>
+  <section class="section">
+    <div class="wrap prose">
+      <h1>Privacy</h1>
+      <p>This page explains what we do with the information you send us, in line with Costa Rica's Ley 8968 on the protection of personal data.</p>
+
+      <h2>Who is responsible</h2>
+      <p>{legalEntity || <mark>[Legal entity name to be added before launch]</mark>}, operating as TropiFix, Guanacaste, Costa Rica.</p>
+
+      <h2>What we collect</h2>
+      <p>Only what you put in the request form: the service you need, your description and photos, the zone, town and type of property, who is on site, your timing and budget, your name, WhatsApp number, email if you give it, and preferred language.</p>
+
+      <h2>What we use it for</h2>
+      <p>To handle your request: to match you with a local pro, to contact you on WhatsApp, and to check that the pro contacted you.</p>
+
+      <h2>Who we share it with</h2>
+      <p>One local provider for the trade you asked for, and only after you tick the consent box on the form. We don't sell your data or use it for advertising lists.</p>
+      <p>The site is hosted by Netlify, which stores form submissions on our behalf.</p>
+
+      <h2>Cookies and analytics</h2>
+      <p>If you accept analytics cookies, we use Google Analytics 4 to count visits and form steps. If you decline, no analytics cookies are set.</p>
+
+      <h2>How long we keep it</h2>
+      <p><mark>[Retention period to be confirmed]</mark></p>
+
+      <h2>Your rights</h2>
+      <p>
+        You can ask to see, correct or delete your data at any time.
+        {contactEmail
+          ? <>Write to <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.</>
+          : <mark>[Contact email to be added]</mark>}
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .prose h2 { margin-top: var(--space-4); }
+  mark { background: var(--teal-tint); color: var(--ink); padding: 0 var(--space-2); border-radius: var(--radius-sm); }
+</style>

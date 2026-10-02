@@ -11,7 +11,9 @@ Read `docs/project-context.md` for the business model, zones, services and decis
 - `brand/social-templates.html` and `.md`: Instagram and Facebook layouts.
 - `Logos/`: `tropifix-transparent.png` (on sand), `tropifix-white.png` (on teal and dark photos), `tropifix-teal.png` (solid teal block), `tropifix-icon.png` (square: favicon, avatar). Use as supplied. Never redraw, recolor or stretch.
 - `Icons/`: 21 service icons (Lucide, teal SVG), named after the services.
-- `docs/project-context.md`: the project brief.
+- `docs/project-context.md`: the project brief (kept out of the public repo).
+- `docs/`: `go-live-domain-checklist.md`, `phone-test-checklist.md`, `image-inventory.md`.
+- `src/`: the Astro site. Copy lives in `src/i18n/` and `src/data/`; settings in `src/data/settings.ts` and `site.config.mjs`.
 
 ## Non-negotiable brand rules
 
@@ -26,6 +28,20 @@ Read `docs/project-context.md` for the business model, zones, services and decis
 9. **Photos:** real local Guanacaste photos. No stock-model smiles. Placeholders must be clearly marked.
 10. **Shapes:** soft corners (radius 6, 12, pill for buttons), no drop shadows, no colored left-border cards.
 11. **Accessibility:** text at least 4.5:1 contrast, visible focus ring (2px `--teal-deep`), the site must work on a phone first.
+
+## Standing rules for every page, post and image
+
+**Mobile first.** Build for the phone, then scale up. Check 360px, 390px, 768px and desktop, portrait and landscape: no sideways scroll, no cut-off or overlapping text. Tap targets at least 44×44px. Body and form text at least 16px. Correct `type` and `autocomplete` on fields. Animate only transform and opacity, and respect `prefers-reduced-motion`. Targets: LCP under 2.5s, INP under 200ms, CLS under 0.1, Lighthouse 90+ on mobile.
+
+**SEO on every page.** Use `src/layouts/Base.astro`, which requires a title (under 60 characters), a description (under 160), and the page's address in both languages. Every page needs one H1, a logical heading order, alt text on images, a Spanish twin under `/es/` written natively, and an entry in `src/pages/sitemap.xml.ts`. Service pages come from `src/data/services*.ts`, never hand-copied files. Add JSON-LD where it applies (`src/data/schema.ts`). Use the Zone 1 town names naturally; no keyword stuffing. `npm run build` fails if any of this is missing.
+
+**Higgsfield cost approval.** All images and video are made with Higgsfield, never another generator or stock site. Before generating anything: show a table (asset, where it goes, prompt, model, size, video length, cost in credits from Higgsfield's own quote), the batch total and the current balance, then wait for Loic's OK. Run exactly that list. Any retry, model change or extra asset needs a new OK. Afterwards report credits spent and update `docs/image-inventory.md`. Generated images are placeholders for the hero and share image only, and never show a fake job, person, customer or brand.
+
+**How changes ship.** Work on a branch, open a pull request, let Netlify build the preview and the tests run. Loic merges; Claude never merges to `main`. Test form submissions use `?test` and are never sent by automated tests.
+
+**Facts.** Ask before writing prices, response times, zone dates, number of pros or guarantees. Confirmed so far: free for the customer; a pro makes contact within 4 hours in Zone 1.
+
+**Placeholders.** List any still unfilled at the end of every session: `PUBLIC_WHATSAPP_NUMBER`, `PUBLIC_CONTACT_EMAIL`, `PUBLIC_LEGAL_ENTITY_NAME`, the GA4 ID, the privacy retention period.
 
 ## Working style
 

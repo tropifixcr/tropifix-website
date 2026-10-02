@@ -1,0 +1,158 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from './Icon.astro';
+import RequestForm from './RequestForm.astro';
+import StickyBar from './StickyBar.astro';
+import { services, servicePath } from '../data/services';
+import { zone1Towns } from '../data/zones';
+import { whatsappUrl } from '../data/settings';
+import { organization, faqSchema } from '../data/schema';
+import type { Dict } from '../i18n/en';
+
+interface Props { t: Dict }
+const { t } = Astro.props;
+const lang = t.lang as 'en' | 'es';
+---
+<Base
+  t={t}
+  title={t.meta.title}
+  description={t.meta.description}
+  paths={{ en: '/', es: '/es/' }}
+  schema={[organization(Astro.site!, lang), faqSchema(t.faq.items.map((i) => [i.q, i.a]))]}
+  hasForm
+>
+  <!-- Hero. The teal field is a placeholder for the poster image and video loop. -->
+  <section class="hero">
+    <div class="wrap hero__in">
+      <div class="hero__text">
+        <h1>{t.hero.title}</h1>
+        <p class="hero__lead">{t.hero.lead}</p>
+        <a class="btn btn--outline-on-teal hero__wa" href={whatsappUrl()} target="_blank" rel="noopener" data-track="whatsapp_click">{t.whatsapp}</a>
+      </div>
+      <div class="hero__form"><RequestForm t={t} /></div>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <div class="wrap reveal">
+      <div>
+        <h2>{t.services.title}</h2>
+        <p>{t.services.lead}</p>
+      </div>
+      <ul class="tiles">
+        {services.map((s) => (
+          <li>
+            <a href={servicePath(s, lang)}>
+              <Icon id={s.id} size={32} />
+              {s[lang]}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--deep" id="how">
+    <div class="wrap reveal">
+      <h2>{t.how.title}</h2>
+      <ol class="how">
+        {t.how.steps.map((step) => (
+          <li>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap reveal abroad">
+      <h2>{t.abroad.title}</h2>
+      <p>{t.abroad.text}</p>
+    </div>
+  </section>
+
+  <section class="section section--deep" id="zones">
+    <div class="wrap reveal">
+      <h2>{t.zones.title}</h2>
+      <div>
+        <h3>{t.zones.liveLabel}</h3>
+        <ul class="chips">{zone1Towns.map((town) => <li>{town}</li>)}</ul>
+      </div>
+      <dl class="zones">
+        <div><dt>{t.zones.nextLabel}</dt><dd>{t.zones.next.join(', ')}</dd></div>
+        <div><dt>{t.zones.plannedLabel}</dt><dd>{t.zones.planned.join(', ')}</dd></div>
+      </dl>
+      <p>{t.zones.note}</p>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="wrap reveal">
+      <h2>{t.faq.title}</h2>
+      <div class="faq">
+        {t.faq.items.map((item) => (
+          <details>
+            <summary>{item.q}</summary>
+            <p>{item.a}</p>
+          </details>
+        ))}
+      </div>
+      <p><a href={t.privacy}>{t.faq.privacyLink}</a></p>
+    </div>
+  </section>
+
+  <StickyBar slot="after" t={t} />
+</Base>
+
+<style>
+  .hero { background: var(--teal); color: var(--on-teal); padding-block: var(--space-6) var(--space-12); }
+  .hero__in { display: grid; gap: var(--space-6); }
+  .hero__text { display: grid; gap: var(--space-4); justify-items: start; }
+  .hero h1 { color: var(--on-teal); }
+  .hero__text > * { animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+  .hero__lead { animation-delay: 0.1s; }
+  .hero__wa { animation-delay: 0.2s; }
+  .hero__form { animation: rise 0.5s 0.25s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+
+  .tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-2); }
+  .tiles a {
+    display: flex; flex-direction: column; gap: var(--space-2); height: 100%;
+    padding: var(--space-4); background: var(--sand-deep); border-radius: var(--radius-md);
+    color: var(--ink); font-weight: 700; text-decoration: none; line-height: 22px;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .tiles a:hover { transform: translateY(-3px); }
+  .tiles a:active { transform: scale(0.97); }
+
+  .how { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-6); counter-reset: step; }
+  .how li { counter-increment: step; display: grid; grid-template-columns: 48px 1fr; column-gap: var(--space-4); }
+  .how li::before {
+    content: counter(step); grid-row: span 2;
+    display: grid; place-items: center; width: 48px; height: 48px; border-radius: var(--radius-pill);
+    background: var(--teal); color: var(--on-teal); font: 700 20px/1 var(--font-display);
+  }
+
+  .abroad { background: var(--teal-tint); border-radius: var(--radius-md); padding-block: var(--space-6); max-width: 1088px; }
+
+  .chips { list-style: none; margin: var(--space-4) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .chips li { background: var(--teal-tint); border-radius: var(--radius-sm); padding: var(--space-2) var(--space-4); }
+  .zones { margin: 0; display: grid; gap: var(--space-4); }
+  .zones dt { font-weight: 700; }
+  .zones dd { margin: 0; }
+
+  .faq { display: grid; gap: var(--space-2); max-width: 760px; }
+  .faq details { background: var(--sand-deep); border-radius: var(--radius-md); }
+  .faq summary { cursor: pointer; font-weight: 700; padding: var(--space-4); min-height: 48px; border-radius: var(--radius-md); }
+  .faq p { padding: 0 var(--space-4) var(--space-4); }
+
+  @media (min-width: 900px) {
+    .hero { padding-block: calc(var(--space-12) * 2); }
+    .hero__in { grid-template-columns: 1fr minmax(0, 520px); gap: var(--space-12); align-items: start; }
+    .hero__text { position: sticky; top: var(--space-12); }
+    .how { grid-template-columns: repeat(2, 1fr); }
+    .zones { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

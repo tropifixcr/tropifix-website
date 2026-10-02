@@ -3,36 +3,91 @@ import '@fontsource/poppins/latin-600.css';
 import '@fontsource/poppins/latin-700.css';
 import '@fontsource/nunito-sans/latin-400.css';
 import '@fontsource/nunito-sans/latin-700.css';
+// The two fonts above the fold on every page are preloaded so text doesn't shift when they arrive.
+import headingFont from '@fontsource/poppins/files/poppins-latin-700-normal.woff2?url';
+import bodyFont from '@fontsource/nunito-sans/files/nunito-sans-latin-400-normal.woff2?url';
 import '../../brand/tokens.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 import { indexable } from '../../site.config.mjs';
+import type { Dict } from '../i18n/en';
 
 interface Props {
+  t: Dict;
   title: string;
   description: string;
-  lang?: 'en' | 'es';
+  /** This page's address in each language, for hreflang and the language toggle. */
+  paths: { en: string; es: string };
+  /** schema.org objects, written out as JSON-LD. */
+  schema?: object[];
+  /** True when the request form is on this page, so "Request a fix" scrolls instead of leaving. */
+  hasForm?: boolean;
+  /** Keeps a page out of search engines even on the real domain (404). */
+  noindex?: boolean;
 }
-const { title, description, lang = 'en' } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const { t, title, description, paths, schema = [], hasForm = false, noindex = false } = Astro.props;
+const abs = (path: string) => new URL(path, Astro.site).href;
+const lang = t.lang as 'en' | 'es';
+const canonical = abs(paths[lang]);
+const ogImage = abs('/og-default.png');
 ---
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} class="no-js">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {!indexable && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="alternate" hreflang="en" href={abs(paths.en)} />
+    <link rel="alternate" hreflang="es" href={abs(paths.es)} />
+    <link rel="alternate" hreflang="x-default" href={abs(paths.en)} />
+    {(!indexable || noindex) && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="TropiFix" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'es_CR'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="preload" as="font" type="font/woff2" href={headingFont} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={bodyFont} crossorigin />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {schema.map((item) => (
+      <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...item })} />
+    ))}
+    <script is:inline>document.documentElement.classList.remove('no-js');</script>
   </head>
   <body>
-    <slot />
+    <Header t={t} switchTo={paths[t.switchLang.lang as 'en' | 'es']} requestHref={hasForm ? '#request' : `${t.home}#request`} />
+    <main>
+      <slot />
+    </main>
+    <Footer t={t} switchTo={paths[t.switchLang.lang as 'en' | 'es']} />
+    <slot name="after" />
+    <script>
+      // Fade sections in once as they scroll into view.
+      const seen = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-visible');
+          seen.unobserve(entry.target);
+        }
+      }, { rootMargin: '0px 0px -10% 0px' });
+      document.querySelectorAll('.reveal').forEach((el) => seen.observe(el));
+
+      // Analytics events for tagged links (WhatsApp buttons).
+      document.querySelectorAll<HTMLElement>('[data-track]').forEach((el) =>
+        el.addEventListener('click', () => (window.dataLayer ||= []).push({ event: el.dataset.track })),
+      );
+    </script>
   </body>
 </html>
-
-<style is:global>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; }
-  img { max-width: 100%; height: auto; }
-</style>
