@@ -10,7 +10,7 @@ export const organization = (site: URL, lang: Lang) => ({
   name: 'TropiFix',
   url: new URL(lang === 'en' ? '/' : '/es/', site).href,
   logo: new URL('/apple-touch-icon.png', site).href,
-  image: new URL('/og-default.png', site).href,
+  image: new URL('/og-default.jpg', site).href,
   slogan: lang === 'en' ? 'Local pros for every fix.' : 'Profesionales locales para cada arreglo.',
   address: { '@type': 'PostalAddress', addressRegion: 'Guanacaste', addressCountry: 'CR' },
   areaServed,

@@ -6,10 +6,16 @@ Naming pattern: `src/assets/<page>-<slot>.<ext>` (for example `src/assets/home-h
 
 | File | Page | Prompt | Model | Status |
 | --- | --- | --- | --- | --- |
-| _none yet_ | | | | |
+| `src/assets/home-hero-poster.jpg` | Home hero (poster, and still for phones and reduced motion) | Modern two-storey hillside home in Guanacaste with a long pool and an open furnished ground-floor terrace, midday, Pacific view (built in three edits: dusk original, daytime version, front door replaced by an open terrace) | Higgsfield GPT Image 2, 16:9, 2K, medium | AI placeholder: replace with real photo |
+| `public/og-default.jpg` | Share image, every page | Crop of the hero poster with the supplied white logo on a teal band, 1200×630 | (derived, no generation) | AI placeholder: replace with real photo |
 
-## Not generated
+## Credits spent
 
-| File | Page | What it is |
+| Date | Item | Credits |
 | --- | --- | --- |
-| `public/og-default.png` | Share image, every page | The supplied teal logo on a teal field, 1200×630. Temporary until the share image is generated. |
+| 2026-10-02 | Hero still, first attempt (too dark, rejected) | 2 |
+| 2026-10-02 | Hero still, modern home at dusk | 2 |
+| 2026-10-02 | Daytime version | 2 |
+| 2026-10-02 | Open terrace edit (approved) | 2 |
+| 2026-10-02 | White walls edit (not used) | 2 |
+| 2026-10-02 | Hero video, 8 s, MiniMax H3 | 16 |

@@ -1,5 +1,7 @@
 ---
+import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import heroPoster from '../assets/home-hero-poster.jpg';
 import Icon from './Icon.astro';
 import RequestForm from './RequestForm.astro';
 import StickyBar from './StickyBar.astro';
@@ -21,8 +23,19 @@ const lang = t.lang as 'en' | 'es';
   schema={[organization(Astro.site!, lang), faqSchema(t.faq.items.map((i) => [i.q, i.a]))]}
   hasForm
 >
-  <!-- Hero. The teal field is a placeholder for the poster image and video loop. -->
+  <!-- Hero. The poster is an AI placeholder (docs/image-inventory.md): replace the file to swap in a real photo. -->
   <section class="hero">
+    <div class="hero__media">
+      <Picture
+        src={heroPoster}
+        alt={t.hero.imageAlt}
+        formats={['avif', 'webp']}
+        widths={[480, 768, 1200, 1600, 2400]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
     <div class="wrap hero__in">
       <div class="hero__text">
         <h1>{t.hero.title}</h1>
@@ -107,7 +120,18 @@ const lang = t.lang as 'en' | 'es';
 </Base>
 
 <style>
-  .hero { background: var(--teal); color: var(--on-teal); padding-block: var(--space-6) var(--space-12); }
+  .hero { position: relative; isolation: isolate; background: var(--teal); color: var(--on-teal); padding-block: var(--space-6) var(--space-12); }
+  /* Phone: the photo sits behind the headline only, then fades into the teal behind the form.
+     The ink scrim keeps white text readable over the bright sky. */
+  .hero__media { position: absolute; inset: 0 0 auto 0; height: 520px; z-index: -1; overflow: hidden; }
+  .hero__media :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 62% 50%; }
+  .hero__media::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom,
+      color-mix(in srgb, var(--ink) 62%, transparent) 0%,
+      color-mix(in srgb, var(--ink) 55%, transparent) 60%,
+      var(--teal) 100%);
+  }
   .hero__in { display: grid; gap: var(--space-6); }
   .hero__text { display: grid; gap: var(--space-4); justify-items: start; }
   .hero h1 { color: var(--on-teal); }
@@ -150,6 +174,14 @@ const lang = t.lang as 'en' | 'es';
 
   @media (min-width: 900px) {
     .hero { padding-block: calc(var(--space-12) * 2); }
+    .hero__media { inset: 0; height: auto; }
+    .hero__media :global(img) { object-position: 60% 40%; }
+    .hero__media::after {
+      background: linear-gradient(to right,
+        color-mix(in srgb, var(--ink) 70%, transparent) 0%,
+        color-mix(in srgb, var(--ink) 45%, transparent) 45%,
+        color-mix(in srgb, var(--ink) 10%, transparent) 100%);
+    }
     .hero__in { grid-template-columns: 1fr minmax(0, 520px); gap: var(--space-12); align-items: start; }
     .hero__text { position: sticky; top: var(--space-12); }
     .how { grid-template-columns: repeat(2, 1fr); }
