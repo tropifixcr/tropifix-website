@@ -2,6 +2,8 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: var(--space-4); }
 body { margin: 0; overflow-wrap: break-word; }
+/* Short pages (404, privacy) keep the footer below the first screen. */
+main { min-height: 80svh; }
 img, svg { max-width: 100%; }
 [hidden] { display: none !important; }
 ::selection { background: var(--teal-tint); color: var(--ink); }

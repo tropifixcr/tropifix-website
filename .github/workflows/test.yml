@@ -24,3 +24,10 @@ jobs:
           CONTEXT: production
           SITE_URL: https://tropifixcr.com
       - run: npm run lighthouse
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            .lighthouseci
+            test-results

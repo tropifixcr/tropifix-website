@@ -3,6 +3,9 @@ import '@fontsource/poppins/latin-600.css';
 import '@fontsource/poppins/latin-700.css';
 import '@fontsource/nunito-sans/latin-400.css';
 import '@fontsource/nunito-sans/latin-700.css';
+// The two fonts above the fold on every page are preloaded so text doesn't shift when they arrive.
+import headingFont from '@fontsource/poppins/files/poppins-latin-700-normal.woff2?url';
+import bodyFont from '@fontsource/nunito-sans/files/nunito-sans-latin-400-normal.woff2?url';
 import '../../brand/tokens.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
@@ -54,6 +57,8 @@ const ogImage = abs('/og-default.png');
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
+    <link rel="preload" as="font" type="font/woff2" href={headingFont} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={bodyFont} crossorigin />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     {schema.map((item) => (
