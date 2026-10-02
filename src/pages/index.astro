@@ -1,0 +1,29 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import logo from '../../Logos/tropifix-transparent.png';
+---
+<Base
+  title="TropiFix: local pros for every fix in Guanacaste"
+  description="TropiFix connects property owners, managers and hotels in Guanacaste, Costa Rica with local trade pros. The site opens soon."
+>
+  <main>
+    <Image src={logo} alt="TropiFix" widths={[240, 480]} sizes="240px" width={240} loading="eager" />
+    <h1>Local pros for every fix.</h1>
+    <p>We're getting the site ready. It opens soon.</p>
+  </main>
+</Base>
+
+<style>
+  main {
+    min-height: 100svh;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    text-align: center;
+  }
+  h1 { font-size: 36px; line-height: 44px; font-weight: 700; margin: 0; }
+  p { margin: 0; }
+</style>
