@@ -16,3 +16,6 @@ docs/project-context.md
 test-results/
 playwright-report/
 .lighthouseci/
+
+# Generated images awaiting approval
+previews/

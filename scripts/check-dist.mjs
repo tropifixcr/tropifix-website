@@ -46,7 +46,7 @@ for (const [page, source] of Object.entries(html)) {
   const is404 = page.endsWith('404.html');
 
   // Links, images, fonts, icons and video: every internal target must exist.
-  const urls = [...source.matchAll(/\s(?:href|src|poster)="([^"]+)"/g)].map((m) => m[1]);
+  const urls = [...source.matchAll(/\s(?:href|src|poster|data-src-[\w-]+)="([^"]+)"/g)].map((m) => m[1]);
   const srcsets = [...source.matchAll(/\ssrcset="([^"]+)"/g)].flatMap((m) =>
     m[1].split(',').map((s) => s.trim().split(/\s+/)[0]),
   );

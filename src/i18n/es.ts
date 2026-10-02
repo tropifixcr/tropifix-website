@@ -39,6 +39,7 @@ export const es: Dict = {
   },
   hero: {
     title: 'Profesionales locales para cada arreglo.',
+    imageAlt: 'Una casa moderna en una ladera de Guanacaste, con piscina y terraza abierta frente al Pacífico.',
     lead: 'Cuéntenos qué hay que arreglar en su propiedad. Un profesional de la zona le contacta en menos de 4 horas.',
   },
   services: {

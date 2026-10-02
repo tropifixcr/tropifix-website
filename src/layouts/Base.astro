@@ -32,7 +32,7 @@ const { t, title, description, paths, schema = [], hasForm = false, noindex = fa
 const abs = (path: string) => new URL(path, Astro.site).href;
 const lang = t.lang as 'en' | 'es';
 const canonical = abs(paths[lang]);
-const ogImage = abs('/og-default.png');
+const ogImage = abs('/og-default.jpg');
 const analytics = Boolean(gaId) && process.env.CONTEXT === 'production';
 ---
 <!doctype html>
