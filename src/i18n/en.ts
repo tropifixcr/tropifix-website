@@ -14,6 +14,13 @@ export const en = {
   // The link to the other language, shown in the header and footer.
   switchLang: { label: 'Español', lang: 'es', aria: 'Ver esta página en español' },
   logoAlt: 'TropiFix',
+  cookies: {
+    label: 'Cookies',
+    text: 'We use analytics cookies to see how the site is used. No ads.',
+    accept: 'Accept',
+    decline: 'Decline',
+    settings: 'Cookie settings',
+  },
   servicePage: {
     home: 'Home',
     services: 'Services',
@@ -32,7 +39,7 @@ export const en = {
   },
   hero: {
     title: 'Local pros for every fix.',
-    lead: 'Tell us what needs fixing at your place between Tamarindo and Las Catalinas. A local pro contacts you within 4 hours.',
+    lead: 'Tell us what needs fixing at your place. A local pro contacts you within 4 hours.',
   },
   services: {
     title: 'What needs fixing?',
@@ -75,12 +82,12 @@ export const en = {
 
   form: {
     title: 'Tell us what needs fixing',
-    stepOf: 'Step {n} of 4',
+    stepOf: 'Step {n} of 5',
     back: 'Back',
     next: 'Next',
     submit: 'Send my request',
     sending: 'Sending…',
-    steps: ['What do you need?', 'Where is it?', 'When and budget', 'How do we reach you?'],
+    steps: ['What do you need?', 'Tell us about the job', 'Where is it?', 'When and budget', 'How do we reach you?'],
     service: 'Service',
     jobType: 'Type of job',
     jobTypes: [
@@ -139,7 +146,7 @@ export const en = {
     consent: 'I agree that TropiFix may share my request with one vetted local provider so they can contact me.',
     consentLink: 'Privacy page',
     errors: {
-      service: 'Pick a service, or “Other / not sure”.',
+      service: 'Pick a service to continue.',
       jobType: 'Pick the type of job.',
       description: 'Tell us a little about the problem.',
       zone: 'Pick a zone.',

@@ -12,17 +12,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # Build, then check every page for broken links, missing files and SEO tags.
-      - run: npm run build
-      # Run the request form end to end, plus an accessibility check on every page type and form step.
+      # Build as it will be on the real domain (the noindex tag used on netlify.app would fail the
+      # Lighthouse SEO score), with a fake GA4 ID so the cookie banner can be tested. Then check
+      # every page for broken links, missing files and SEO tags.
+      - run: npm run build:test
+      # The request form end to end, cookie consent, and an accessibility check on every page type.
       - run: npx playwright install --with-deps chromium
       - run: npm test
-      # Lighthouse on mobile for each page type in both languages. Built as it will be on the
-      # real domain, because the noindex tag used on netlify.app would fail the SEO score.
-      - run: npm run build
-        env:
-          CONTEXT: production
-          SITE_URL: https://tropifixcr.com
+      # Lighthouse on mobile for each page type in both languages.
       - run: npm run lighthouse
       - if: failure()
         uses: actions/upload-artifact@v4

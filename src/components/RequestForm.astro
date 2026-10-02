@@ -2,10 +2,10 @@
 // The request form: the site's one job. Rendered as plain static HTML with every
 // field name present, so Netlify Forms detects it at build time and it still
 // works (as one long form, without photos) if JavaScript fails.
-// src/scripts/request-form.ts turns it into 4 steps.
+// src/scripts/request-form.ts turns it into 5 steps.
 import Icon from './Icon.astro';
 import ChipGroup from './ChipGroup.astro';
-import { services, otherService } from '../data/services';
+import { services } from '../data/services';
 import { zones, zone1Towns } from '../data/zones';
 import { whatsappNumber } from '../data/settings';
 import type { Dict } from '../i18n/en';
@@ -18,7 +18,6 @@ interface Props {
 const { t, service } = Astro.props;
 const f = t.form;
 const lang = t.lang as 'en' | 'es';
-const tiles = [...services, otherService];
 const liveZones = zones.filter((z) => z.live).map((z) => z.id);
 const codes = ['+506', '+1', '+44', '+49', '+33', '+34', '+31', '+41', '+39', '+52'];
 
@@ -66,7 +65,7 @@ const groups = {
       <fieldset class="rf__group" data-required="service">
         <legend>{f.service}</legend>
         <div class="rf__tiles">
-          {tiles.map((s) => (
+          {services.map((s) => (
             <label class="rf__tile">
               <input type="radio" name="service" value={s.id} checked={s.id === service} />
               <span>
@@ -78,6 +77,11 @@ const groups = {
         </div>
         <p class="rf__error" hidden>{f.errors.service}</p>
       </fieldset>
+    </fieldset>
+
+    <!-- Step 2 -->
+    <fieldset class="rf__step" data-step="2">
+      <legend>{f.steps[1]}</legend>
 
       <ChipGroup name="job_type" {...groups.job_type} />
 
@@ -101,9 +105,9 @@ const groups = {
       </div>
     </fieldset>
 
-    <!-- Step 2 -->
-    <fieldset class="rf__step" data-step="2">
-      <legend>{f.steps[1]}</legend>
+    <!-- Step 3 -->
+    <fieldset class="rf__step" data-step="3">
+      <legend>{f.steps[2]}</legend>
 
       <div class="rf__field">
         <label for="rf-zone">{f.zone}</label>
@@ -135,16 +139,16 @@ const groups = {
       <ChipGroup name="on_site" {...groups.on_site} />
     </fieldset>
 
-    <!-- Step 3 -->
-    <fieldset class="rf__step" data-step="3">
-      <legend>{f.steps[2]}</legend>
+    <!-- Step 4 -->
+    <fieldset class="rf__step" data-step="4">
+      <legend>{f.steps[3]}</legend>
       <ChipGroup name="urgency" {...groups.urgency} />
       <ChipGroup name="budget" {...groups.budget} />
     </fieldset>
 
-    <!-- Step 4 -->
-    <fieldset class="rf__step" data-step="4">
-      <legend>{f.steps[3]}</legend>
+    <!-- Step 5 -->
+    <fieldset class="rf__step" data-step="5">
+      <legend>{f.steps[4]}</legend>
 
       <div class="rf__field">
         <label for="rf-name">{f.name}</label>
@@ -233,7 +237,7 @@ const groups = {
   .rf__error { color: var(--coral-text); font-weight: 700; margin-top: var(--space-2); }
 
   /* Tiles and chips: a hidden radio with a styled label. */
-  .rf__tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--space-2); }
+  .rf__tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: var(--space-2); }
   .rf__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
   .rf__tile, .rf__chip { position: relative; display: block; cursor: pointer; }
   .rf__tile input, .rf__chip input { position: absolute; opacity: 0; inset: 0; margin: 0; pointer-events: none; }
@@ -269,7 +273,7 @@ const groups = {
 
   /* Stepped mode (script adds .is-stepped): one step at a time, sliding in. */
   .rf__bar { height: 6px; background: var(--sand-deep); border-radius: var(--radius-pill); overflow: hidden; margin-top: var(--space-2); }
-  .rf__bar span { display: block; height: 100%; background: var(--teal); transform-origin: left; transform: scaleX(0.25); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .rf__bar span { display: block; height: 100%; background: var(--teal); transform-origin: left; transform: scaleX(0.2); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
   .rf__form.is-stepped .rf__step:not(.is-active) { display: none; }
   .rf__form.is-stepped .rf__step.is-active { animation: rf-in 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
   .rf__form.is-stepped.is-back .rf__step.is-active { animation-name: rf-in-back; }

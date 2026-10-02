@@ -14,6 +14,13 @@ export const es: Dict = {
   footer: { privacy: 'Privacidad', rights: 'TropiFix, Guanacaste, Costa Rica' },
   switchLang: { label: 'English', lang: 'en', aria: 'View this page in English' },
   logoAlt: 'TropiFix',
+  cookies: {
+    label: 'Cookies',
+    text: 'Usamos cookies de analítica para saber cómo se usa el sitio. Sin publicidad.',
+    accept: 'Aceptar',
+    decline: 'Rechazar',
+    settings: 'Configuración de cookies',
+  },
   servicePage: {
     home: 'Inicio',
     services: 'Servicios',
@@ -32,7 +39,7 @@ export const es: Dict = {
   },
   hero: {
     title: 'Profesionales locales para cada arreglo.',
-    lead: 'Cuéntenos qué hay que arreglar en su propiedad entre Tamarindo y Las Catalinas. Un profesional de la zona le contacta en menos de 4 horas.',
+    lead: 'Cuéntenos qué hay que arreglar en su propiedad. Un profesional de la zona le contacta en menos de 4 horas.',
   },
   services: {
     title: '¿Qué hay que arreglar?',
@@ -75,12 +82,12 @@ export const es: Dict = {
 
   form: {
     title: 'Cuéntenos qué hay que arreglar',
-    stepOf: 'Paso {n} de 4',
+    stepOf: 'Paso {n} de 5',
     back: 'Atrás',
     next: 'Siguiente',
     submit: 'Enviar mi solicitud',
     sending: 'Enviando…',
-    steps: ['¿Qué necesita?', '¿Dónde es?', 'Cuándo y presupuesto', '¿Cómo le contactamos?'],
+    steps: ['¿Qué necesita?', 'Cuéntenos del trabajo', '¿Dónde es?', 'Cuándo y presupuesto', '¿Cómo le contactamos?'],
     service: 'Servicio',
     jobType: 'Tipo de trabajo',
     jobTypes: [
@@ -139,7 +146,7 @@ export const es: Dict = {
     consent: 'Acepto que TropiFix comparta mi solicitud con un proveedor local verificado para que me contacte.',
     consentLink: 'Página de privacidad',
     errors: {
-      service: 'Elija un servicio, u “Otro / no estoy seguro”.',
+      service: 'Elija un servicio para continuar.',
       jobType: 'Elija el tipo de trabajo.',
       description: 'Cuéntenos un poco sobre el problema.',
       zone: 'Elija una zona.',

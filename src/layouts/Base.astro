@@ -10,7 +10,9 @@ import '../../brand/tokens.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import CookieBanner from '../components/CookieBanner.astro';
 import { indexable } from '../../site.config.mjs';
+import { gaId } from '../data/settings';
 import type { Dict } from '../i18n/en';
 
 interface Props {
@@ -31,6 +33,7 @@ const abs = (path: string) => new URL(path, Astro.site).href;
 const lang = t.lang as 'en' | 'es';
 const canonical = abs(paths[lang]);
 const ogImage = abs('/og-default.png');
+const analytics = Boolean(gaId) && process.env.CONTEXT === 'production';
 ---
 <!doctype html>
 <html lang={lang} class="no-js">
@@ -64,14 +67,48 @@ const ogImage = abs('/og-default.png');
     {schema.map((item) => (
       <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...item })} />
     ))}
-    <script is:inline>document.documentElement.classList.remove('no-js');</script>
+    <script is:inline>
+      document.documentElement.classList.remove('no-js');
+      // Site-wide event helper. Sends nothing unless the visitor accepted analytics.
+      window.tfTrack = function (name, params) {
+        if (window.tfAnalyticsOn) window.gtag('event', name, params || {});
+      };
+    </script>
+    {analytics && (
+      <script is:inline define:vars={{ gaId }}>
+        // Google Consent Mode v2, basic mode: GA4 is not requested at all until the visitor accepts.
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        window.gtag('consent', 'default', {
+          ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied',
+        });
+        window.tfLoadAnalytics = function () {
+          // ?test visits (manual test leads) are never measured.
+          if (window.tfAnalyticsOn || new URLSearchParams(location.search).has('test')) return;
+          window.tfAnalyticsOn = true;
+          window.gtag('consent', 'update', { analytics_storage: 'granted' });
+          window.gtag('js', new Date());
+          window.gtag('config', gaId);
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+          document.head.appendChild(script);
+        };
+        var choice = null;
+        try { choice = localStorage.getItem('tf-consent'); } catch (e) {}
+        // Set before first paint, so the banner never appears and then jumps away.
+        if (choice) document.documentElement.classList.add('consent-set');
+        if (choice === 'granted') window.tfLoadAnalytics();
+      </script>
+    )}
   </head>
   <body>
+    {analytics && <CookieBanner t={t} />}
     <Header t={t} switchTo={paths[t.switchLang.lang as 'en' | 'es']} requestHref={hasForm ? '#request' : `${t.home}#request`} />
     <main>
       <slot />
     </main>
-    <Footer t={t} switchTo={paths[t.switchLang.lang as 'en' | 'es']} />
+    <Footer t={t} switchTo={paths[t.switchLang.lang as 'en' | 'es']} cookieSettings={analytics} />
     <slot name="after" />
     <script>
       // Fade sections in once as they scroll into view.
@@ -86,7 +123,7 @@ const ogImage = abs('/og-default.png');
 
       // Analytics events for tagged links (WhatsApp buttons).
       document.querySelectorAll<HTMLElement>('[data-track]').forEach((el) =>
-        el.addEventListener('click', () => (window.dataLayer ||= []).push({ event: el.dataset.track })),
+        el.addEventListener('click', () => window.tfTrack(el.dataset.track!)),
       );
     </script>
   </body>

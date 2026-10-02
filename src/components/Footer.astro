@@ -3,8 +3,8 @@ import { Image } from 'astro:assets';
 import logo from '../../Logos/tropifix-white.png';
 import { whatsappUrl, contactEmail } from '../data/settings';
 import type { Dict } from '../i18n/en';
-interface Props { t: Dict; switchTo: string }
-const { t, switchTo } = Astro.props;
+interface Props { t: Dict; switchTo: string; cookieSettings: boolean }
+const { t, switchTo, cookieSettings } = Astro.props;
 ---
 <footer class="footer">
   <div class="wrap footer__in">
@@ -19,6 +19,7 @@ const { t, switchTo } = Astro.props;
       <li><a href="https://www.facebook.com/tropifixcr" target="_blank" rel="noopener">Facebook</a></li>
       <li><a href={t.privacy}>{t.footer.privacy}</a></li>
       <li><a href={switchTo} lang={t.switchLang.lang} hreflang={t.switchLang.lang}>{t.switchLang.label}</a></li>
+      {cookieSettings && <li><button type="button" data-cookie-settings>{t.cookies.settings}</button></li>}
     </ul>
     <p class="footer__small">{t.footer.rights}</p>
   </div>
@@ -29,7 +30,10 @@ const { t, switchTo } = Astro.props;
   .footer { background: var(--teal); color: var(--on-teal); padding-block: var(--space-12) calc(var(--space-12) + 72px); }
   .footer__in { display: grid; gap: var(--space-6); }
   .footer__links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 var(--space-6); }
-  .footer__links a { display: inline-flex; align-items: center; min-height: 48px; color: var(--on-teal); font-weight: 700; }
+  .footer__links :is(a, button) {
+    display: inline-flex; align-items: center; min-height: 48px; color: var(--on-teal);
+    font: 700 17px/28px var(--font-body); background: none; border: 0; padding: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+  }
   .footer__small { font-size: 14px; line-height: 22px; }
   @media (min-width: 768px) { .footer { padding-bottom: var(--space-12); } }
 </style>

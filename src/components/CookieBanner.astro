@@ -1,0 +1,46 @@
+---
+// A small strip at the very top of the page, in the normal page flow: it pushes the
+// page down instead of floating, so it can never cover the form, the request button
+// or the sticky bar. Hidden before first paint once a choice is stored (see Base.astro).
+import type { Dict } from '../i18n/en';
+interface Props { t: Dict }
+const { t } = Astro.props;
+---
+<section class="cookie" aria-label={t.cookies.label}>
+  <div class="wrap cookie__in">
+    <p class="small">{t.cookies.text} <a href={t.privacy}>{t.footer.privacy}</a></p>
+    <div class="cookie__buttons">
+      <button type="button" class="btn btn--teal" data-consent="denied">{t.cookies.decline}</button>
+      <button type="button" class="btn btn--teal" data-consent="granted">{t.cookies.accept}</button>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.documentElement;
+  document.querySelectorAll<HTMLElement>('[data-consent]').forEach((button) =>
+    button.addEventListener('click', () => {
+      const choice = button.dataset.consent!;
+      try { localStorage.setItem('tf-consent', choice); } catch {}
+      root.classList.add('consent-set');
+      if (choice === 'granted') window.tfLoadAnalytics?.();
+      // Declining after accepting takes effect on the next page load.
+      else window.gtag('consent', 'update', { analytics_storage: 'denied' });
+    }),
+  );
+  // "Cookie settings" in the footer brings the banner back.
+  document.querySelector('[data-cookie-settings]')?.addEventListener('click', () => {
+    root.classList.remove('consent-set');
+    scrollTo({ top: 0 });
+    document.querySelector<HTMLElement>('[data-consent]')?.focus();
+  });
+</script>
+
+<style>
+  .cookie { background: var(--sand-deep); padding-block: var(--space-2); }
+  :global(.consent-set) .cookie, :global(.no-js) .cookie { display: none; }
+  .cookie__in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-4); }
+  .cookie p { color: var(--ink); flex: 1 1 240px; }
+  .cookie__buttons { display: flex; gap: var(--space-2); }
+  .cookie .btn { min-height: 44px; padding-inline: var(--space-4); font-size: 16px; }
+</style>

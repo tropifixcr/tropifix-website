@@ -26,15 +26,19 @@ for (const path of ['/', '/es/']) {
     const next = page.locator('.rf__next');
     const choose = (name: string, value: string) => page.locator(`label:has(input[name=${name}][value="${value}"])`).click();
 
-    await next.click(); // step 1 with errors showing
+    await next.click(); // step 1 with its error showing
     await expectNoViolations(page, 'step 1 errors');
     await choose('service', 'plumbing');
+    await next.click();
+
+    await next.click();
+    await expectNoViolations(page, 'step 2 errors');
     await choose('job_type', 'repair');
     await page.locator('#rf-description').fill('Test');
     await next.click();
 
     await next.click();
-    await expectNoViolations(page, 'step 2 errors');
+    await expectNoViolations(page, 'step 3 errors');
     await page.locator('#rf-zone').selectOption('zone1');
     await page.locator('#rf-town-select').selectOption('Tamarindo');
     await choose('property_type', 'house');
@@ -42,12 +46,12 @@ for (const path of ['/', '/es/']) {
     await next.click();
 
     await next.click();
-    await expectNoViolations(page, 'step 3 errors');
+    await expectNoViolations(page, 'step 4 errors');
     await choose('urgency', 'week');
     await choose('budget', 'unsure');
     await next.click();
 
     await page.locator('.rf__submit').click();
-    await expectNoViolations(page, 'step 4 errors');
+    await expectNoViolations(page, 'step 5 errors');
   });
 }
