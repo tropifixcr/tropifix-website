@@ -39,6 +39,7 @@ export const en = {
   },
   hero: {
     title: 'Local pros for every fix.',
+    imageAlt: 'A modern hillside home in Guanacaste with a pool and an open terrace looking out to the Pacific.',
     lead: 'Tell us what needs fixing at your place. A local pro contacts you within 4 hours.',
   },
   services: {

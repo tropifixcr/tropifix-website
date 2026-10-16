@@ -1,5 +1,7 @@
 ---
+import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import heroPoster from '../assets/home-hero-poster.jpg';
 import Icon from './Icon.astro';
 import RequestForm from './RequestForm.astro';
 import StickyBar from './StickyBar.astro';
@@ -21,8 +23,33 @@ const lang = t.lang as 'en' | 'es';
   schema={[organization(Astro.site!, lang), faqSchema(t.faq.items.map((i) => [i.q, i.a]))]}
   hasForm
 >
-  <!-- Hero. The teal field is a placeholder for the poster image and video loop. -->
+  <!-- Hero. The poster is an AI placeholder (docs/image-inventory.md): replace the file to swap in a real photo. -->
   <section class="hero">
+    <div class="hero__media">
+      <Picture
+        src={heroPoster}
+        alt={t.hero.imageAlt}
+        formats={['avif', 'webp']}
+        widths={[480, 768, 1200, 1600, 2400]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <!-- Silent loop over the poster. Sources are attached by the script below, after the page has
+           loaded, so the still stays the main content and nothing downloads for reduced motion or data saver. -->
+      <video
+        class="hero__video"
+        muted
+        loop
+        playsinline
+        preload="none"
+        aria-hidden="true"
+        tabindex="-1"
+        data-src-phone="/video/home-hero-720.mp4"
+        data-src-webm="/video/home-hero-1280.webm"
+        data-src-mp4="/video/home-hero-1280.mp4"
+      ></video>
+    </div>
     <div class="wrap hero__in">
       <div class="hero__text">
         <h1>{t.hero.title}</h1>
@@ -106,8 +133,42 @@ const lang = t.lang as 'en' | 'es';
   <StickyBar slot="after" t={t} />
 </Base>
 
+<script>
+  const video = document.querySelector<HTMLVideoElement>('.hero__video');
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  const stillOnly =
+    matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    connection?.saveData ||
+    /(^|-)2g$/.test(connection?.effectiveType || '');
+  if (video && !stillOnly) {
+    addEventListener('load', () => {
+      const phone = !matchMedia('(min-width: 900px)').matches;
+      const sources = phone
+        ? [[video.dataset.srcPhone, 'video/mp4']]
+        : [[video.dataset.srcWebm, 'video/webm'], [video.dataset.srcMp4, 'video/mp4']];
+      for (const [src, type] of sources) video.append(Object.assign(document.createElement('source'), { src, type }));
+      video.addEventListener('playing', () => video.classList.add('is-playing'), { once: true });
+      video.load();
+      video.play().catch(() => {}); // Autoplay refused (Low Power Mode): the still stays.
+    });
+  }
+</script>
+
 <style>
-  .hero { background: var(--teal); color: var(--on-teal); padding-block: var(--space-6) var(--space-12); }
+  .hero { position: relative; isolation: isolate; background: var(--teal); color: var(--on-teal); padding-block: var(--space-6) var(--space-12); }
+  /* Phone: the photo sits behind the headline only, then fades into the teal behind the form.
+     The ink scrim keeps white text readable over the bright sky. */
+  .hero__media { position: absolute; inset: 0 0 auto 0; height: 520px; z-index: -1; overflow: hidden; }
+  .hero__media :global(img), .hero__video { width: 100%; height: 100%; object-fit: cover; object-position: 62% 50%; }
+  .hero__video { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease-out; }
+  .hero__video.is-playing { opacity: 1; }
+  .hero__media::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom,
+      color-mix(in srgb, var(--ink) 62%, transparent) 0%,
+      color-mix(in srgb, var(--ink) 55%, transparent) 60%,
+      var(--teal) 100%);
+  }
   .hero__in { display: grid; gap: var(--space-6); }
   .hero__text { display: grid; gap: var(--space-4); justify-items: start; }
   .hero h1 { color: var(--on-teal); }
@@ -150,6 +211,14 @@ const lang = t.lang as 'en' | 'es';
 
   @media (min-width: 900px) {
     .hero { padding-block: calc(var(--space-12) * 2); }
+    .hero__media { inset: 0; height: auto; }
+    .hero__media :global(img), .hero__video { object-position: 60% 40%; }
+    .hero__media::after {
+      background: linear-gradient(to right,
+        color-mix(in srgb, var(--ink) 70%, transparent) 0%,
+        color-mix(in srgb, var(--ink) 45%, transparent) 45%,
+        color-mix(in srgb, var(--ink) 10%, transparent) 100%);
+    }
     .hero__in { grid-template-columns: 1fr minmax(0, 520px); gap: var(--space-12); align-items: start; }
     .hero__text { position: sticky; top: var(--space-12); }
     .how { grid-template-columns: repeat(2, 1fr); }
