@@ -1,5 +1,7 @@
 # Phone test checklist
 
+Written for the reference marketplace site (see `CLAUDE.md`); adapt it for a category site.
+
 Ten minutes, on your own phone, before each launch and after any big change. Use a deploy preview or the live address.
 
 1. **Load on mobile data.** Turn Wi-Fi off and open the home page. The headline and form should appear within about 3 seconds.

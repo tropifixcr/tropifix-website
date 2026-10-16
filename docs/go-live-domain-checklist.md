@@ -1,5 +1,7 @@
 # Go-live checklist: connecting tropifixcr.com
 
+**On hold since 13 October 2026.** This checklist is for the reference marketplace site, which is not going live under the current plan (see `CLAUDE.md`). The domain steps can be reused for a category site; the "within 4 hours" blocker cannot.
+
 Run this when the site is ready to leave `tropifixcr.netlify.app`. Until step 4 is done, search engines stay blocked.
 
 ## Before you start (launch blockers)
