@@ -2,6 +2,10 @@
 
 <!-- impeccable:product-schema 1 -->
 
+## Status
+
+Reference only since 13 October 2026. This file describes the single-site marketplace build in `src/`. TropiFix now plans simple single-category sites, each rented to one provider (see `CLAUDE.md`). A category site starts from scratch and gets its own product brief; do not treat the purpose, positioning or response-time promise below as current.
+
 ## Platform
 
 web

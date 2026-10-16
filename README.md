@@ -2,6 +2,8 @@
 
 The site for [TropiFix](https://tropifixcr.com): a request form that connects property owners, managers and hotels in Guanacaste, Costa Rica with local trade pros. Static site built with Astro, hosted on Netlify.
 
+**Status (13 October 2026):** this site is kept as a reference. TropiFix now plans simple single-category sites, each rented to one local provider, and those start from scratch. See `CLAUDE.md`.
+
 Brand rules live in `brand/BRAND.md`. Project rules for Claude Code live in `CLAUDE.md`.
 
 ## Run it locally
